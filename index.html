@@ -3,85 +3,195 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Auto Dialer & Lead Manager with Admin Control</title>
+  <title>Auto Dialer & Lead Manager with Jet Fighter Game</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    body { font-family: system-ui, -apple-system, sans-serif; background-color: #0f172a; color: #f8fafc; padding: 10px; padding-bottom: 90px; user-select: none; }
+    body { font-family: system-ui, -apple-system, sans-serif; background-color: #0f172a; color: #f8fafc; padding: 10px; padding-bottom: 90px; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
+    
+    /* Splash & Onboarding Styles */
+    #splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0f172a, #1e293b, #0f172a); z-index: 999999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; transition: opacity 0.5s ease; }
+    .splash-card { background: rgba(30, 41, 59, 0.85); border: 2px solid #22c55e; border-radius: 24px; padding: 20px; width: 100%; max-width: 420px; box-shadow: 0 0 40px rgba(34, 197, 94, 0.4); display: flex; flex-direction: column; align-items: center; gap: 10px; backdrop-filter: blur(10px); }
+    .splash-logo-circle { width: 60px; height: 60px; background: linear-gradient(135deg, #22c55e, #15803d); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 28px; box-shadow: 0 6px 20px rgba(34, 197, 94, 0.6); }
 
-    /* Splash Screen */
-    #splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0f172a, #1e293b, #0f172a); z-index: 999999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
-    .splash-card { background: rgba(30, 41, 59, 0.95); border: 2px solid #22c55e; border-radius: 20px; padding: 18px; width: 100%; max-width: 440px; box-shadow: 0 0 30px rgba(34, 197, 94, 0.3); display: flex; flex-direction: column; align-items: center; gap: 10px; backdrop-filter: blur(10px); }
-    .splash-logo-circle { width: 55px; height: 55px; background: linear-gradient(135deg, #22c55e, #15803d); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 24px; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.5); }
-
-    .app-input { width: 100%; background: #0f172a; border: 1px solid #334155; color: #fff; padding: 8px 10px; border-radius: 8px; font-size: 12px; outline: none; margin-top: 2px; user-select: text; }
+    .app-input { width: 100%; background: #0f172a; border: 1px solid #334155; color: #fff; padding: 8px 10px; border-radius: 8px; font-size: 12px; outline: none; margin-top: 2px; user-select: text; -webkit-user-select: text; }
     .app-input:focus { border-color: #22c55e; }
     .app-btn { width: 100%; background: #22c55e; color: #0f172a; font-weight: bold; padding: 10px; border: none; border-radius: 8px; font-size: 13px; cursor: pointer; margin-top: 6px; }
     .btn-install { background: #eab308; color: #0f172a; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .admin-link { margin-top: 6px; font-size: 12px; color: #38bdf8; text-decoration: underline; cursor: pointer; }
 
-    /* Top Bar */
-    .top-slider { height: 65px; background: rgba(34, 197, 94, 0.12); border: 2px solid #22c55e; border-radius: 12px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; box-shadow: 0 0 15px rgba(34, 197, 94, 0.2); }
-    .calling-man-icon { font-size: 24px; color: #38bdf8; margin-right: 8px; }
-    .slider-text { font-size: 14px; font-weight: bold; color: #22c55e; }
-    .shake-icon { font-size: 20px; color: #90EE38; cursor: pointer; }
+    /* Top Bar Styling */
+    .top-slider { height: 75px; background: rgba(34, 197, 94, 0.12); border: 2px solid #22c55e; border-radius: 14px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; overflow: hidden; box-shadow: 0 0 22px rgba(34, 197, 94, 0.35), inset 0 0 12px rgba(34, 197, 94, 0.2); transition: all 0.3s ease; position: relative; }
+    .calling-man-icon { font-size: 28px; margin-right: 8px; flex-shrink: 0; color: #38bdf8; display: flex; align-items: center; }
+    .computer-wave-flow { display: flex; align-items: center; gap: 4px; margin-right: 10px; }
+    .computer-wave-flow span { display: block; width: 3px; background-color: #38bdf8; border-radius: 2px; animation: flowWave 1s infinite ease-in-out; }
+    .computer-wave-flow span:nth-child(1) { animation-delay: 0.1s; height: 6px; }
+    .computer-wave-flow span:nth-child(2) { animation-delay: 0.3s; height: 12px; }
+    .computer-wave-flow span:nth-child(3) { animation-delay: 0.2s; height: 16px; }
+    .computer-wave-flow span:nth-child(4) { animation-delay: 0.4s; height: 10px; }
+    @keyframes flowWave { 0%, 100% { transform: scaleY(0.4); opacity: 0.4; } 50% { transform: scaleY(1); opacity: 1; filter: drop-shadow(0 0 5px #38bdf8); } }
 
-    /* Containers & Cards */
-    .inputs-row { display: grid; grid-template-columns: 1fr; gap: 6px; margin-bottom: 8px; }
+    .slider-track { flex: 1; overflow: hidden; display: flex; align-items: center; }
+    .slider-text { font-size: 15px; font-weight: bold; color: #22c55e; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(34, 197, 94, 0.5); }
+
+    .top-bar-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; margin-left: 8px; }
+    .shake-icon { font-size: 20px; color: #90EE38; display: inline-block; animation: shakeEffect 0.8s infinite ease-in-out; }
+    @keyframes shakeEffect { 0% { transform: rotate(0deg); } 20% { transform: rotate(-15deg); } 40% { transform: rotate(15deg); } 60% { transform: rotate(-10deg); } 80% { transform: rotate(10deg); } 100% { transform: rotate(0deg); } }
+    .top-bar-wave { display: flex; align-items: center; gap: 3px; height: 18px; }
+    .top-bar-wave span { display: block; width: 3px; background-color: #90EE38; border-radius: 2px; animation: waveEffect 1.2s infinite ease-in-out; }
+    .top-bar-wave span:nth-child(1) { animation-delay: 0.1s; height: 8px; }
+    .top-bar-wave span:nth-child(2) { animation-delay: 0.3s; height: 16px; }
+    .top-bar-wave span:nth-child(3) { animation-delay: 0.2s; height: 12px; }
+    .top-bar-wave span:nth-child(4) { animation-delay: 0.4s; height: 6px; }
+    @keyframes waveEffect { 0%, 100% { transform: scaleY(0.4); opacity: 0.5; } 50% { transform: scaleY(1); opacity: 1; } }
+
+    .user-menu-btn { width: 32px; height: 32px; border-radius: 50%; background: #1e293b; border: 1px solid #38bdf8; color: #38bdf8; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; }
+
+    .live-call-container { display: none; align-items: center; justify-content: space-between; width: 100%; }
+    .top-slider.live-calling .slider-track { display: none; }
+    .top-slider.live-calling .live-call-container { display: flex; }
+    .call-info-text { font-size: 12px; font-weight: bold; color: #22c55e; display: flex; flex-direction: column; gap: 2px; }
+    .call-info-number { font-size: 14px; color: #fff; font-family: monospace; }
+    .call-timer-badge { font-size: 11px; background: #22c55e; color: #0f172a; padding: 2px 6px; border-radius: 10px; font-weight: bold; display: inline-block; margin-left: 5px; }
+    
+    .voice-waves { display: flex; align-items: center; gap: 3px; height: 20px; }
+    .voice-bar { width: 3px; background: #22c55e; border-radius: 3px; animation: waveAnim 0.8s infinite ease-in-out alternate; }
+    .voice-bar:nth-child(1) { animation-delay: 0.1s; }
+    .voice-bar:nth-child(2) { animation-delay: 0.3s; }
+    .voice-bar:nth-child(3) { animation-delay: 0.5s; }
+    .voice-bar:nth-child(4) { animation-delay: 0.2s; }
+    .voice-bar:nth-child(5) { animation-delay: 0.4s; }
+    @keyframes waveAnim { 0% { height: 5px; } 100% { height: 18px; } }
+    
+    .summary-section { margin-bottom: 8px; display: flex; flex-direction: column; gap: 4px; }
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+    .summary-box { background: #1e293b; padding: 6px; border-radius: 10px; border: 1px solid #334155; display: flex; flex-direction: column; justify-content: space-between; min-height: 85px; }
+    .summary-box.int { border-top: 3px solid #22c55e; }
+    .summary-box.not-int { border-top: 3px solid #ef4444; }
+    .summary-box.time-box { border-top: 3px solid #eab308; }
+    .summary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .summary-title { font-size: 10px; font-weight: bold; }
+    .copy-btn { background: #334155; color: #fff; border: none; padding: 2px 5px; border-radius: 4px; font-size: 9px; cursor: pointer; }
+    .summary-list { font-family: monospace; font-size: 10px; color: #cbd5e1; height: 55px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; background: #0f172a; padding: 4px; border-radius: 6px; user-select: none; }
+
+    .inputs-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
     .add-box { background: #1e293b; padding: 8px; border-radius: 10px; display: flex; flex-direction: column; gap: 4px; border: 1px solid #334155; }
-    textarea { width: 100%; height: 50px; background: #0f172a; color: #fff; padding: 6px; border: 1px solid #334155; border-radius: 6px; font-family: monospace; font-size: 11px; outline: none; resize: none; user-select: text; }
+    textarea { width: 100%; height: 45px; background: #0f172a; color: #fff; padding: 6px; border: 1px solid #334155; border-radius: 6px; font-family: monospace; font-size: 11px; outline: none; resize: none; user-select: text; -webkit-user-select: text; }
+    textarea:focus { border-color: #38bdf8; }
+    
+    .btn-row { display: flex; gap: 4px; width: 100%; }
+    .btn-danger, .btn-primary, .btn-excel { flex: 1; font-weight: bold; padding: 8px 2px; border: none; border-radius: 6px; cursor: pointer; font-size: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 2px; }
+    .btn-danger { background: #ef4444; color: #fff; }
+    .btn-primary { background: #38bdf8; color: #0f172a; }
+    .btn-excel { background: #107c41; color: #fff; }
+
+    .stats-bar { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 8px 10px; border-radius: 8px; margin-bottom: 8px; font-size: 12px; border: 1px solid #334155; }
     .container { display: flex; flex-direction: column; gap: 8px; }
     .num-card-box { background: #1e293b; padding: 8px; border-radius: 10px; display: flex; flex-direction: column; gap: 6px; border: 1px solid #334155; }
-    .num-card { flex: 1; display: flex; align-items: center; justify-content: center; padding: 8px; background: #22c55e; color: #fff; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 13px; }
+    .action-row { display: flex; gap: 6px; }
+    .num-card { flex: 1; display: flex; align-items: center; justify-content: center; padding: 8px; background: #22c55e; color: #fff; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 13px; user-select: none; -webkit-user-select: none; }
+    .num-card.called { background: #ef4444 !important; }
+    .wa-btn { padding: 8px 12px; background: #25D366; color: #fff; text-decoration: none; border-radius: 6px; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+    .delete-single-btn { background: #475569; color: #fff; border: none; padding: 8px 10px; border-radius: 6px; cursor: pointer; }
+    .status-buttons-row { display: flex; gap: 4px; }
+    .sub-btn { flex: 1; padding: 6px 2px; background: #0f172a; color: #94a3b8; border: 1px solid #334155; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: bold; }
+    .sub-btn.interested { background: #0f172a; color: #22c55e; border-color: #22c55e; }
+    .sub-btn.not-interested { background: #0f172a; color: #ef4444; border-color: #ef4444; }
+    .sub-btn.time { background: #0f172a; color: #eab308; border-color: #eab308; }
 
-    /* Admin Lists */
-    .user-list-item { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 8px; margin-top: 6px; display: flex; flex-direction: column; gap: 4px; }
-    .user-actions { display: flex; gap: 6px; margin-top: 4px; }
-    .btn-sm { padding: 4px 8px; font-size: 11px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; }
-    .btn-blue { background: #38bdf8; color: #0f172a; }
-    .btn-red { background: #ef4444; color: #fff; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .tab-view-box { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 12px; margin-top: 10px; }
+    .tab-title { font-size: 15px; font-weight: bold; color: #38bdf8; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #334155; padding-bottom: 8px; }
+    
+    .client-filter-box { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+    .client-filter-box select, .client-filter-box input { width: 100%; background: #0f172a; border: 1px solid #334155; color: #fff; padding: 8px; border-radius: 6px; font-size: 11px; outline: none; }
+    
+    .client-table-container { max-height: 380px; overflow-y: auto; background: #0f172a; border: 1px solid #334155; border-radius: 8px; }
+    .client-table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: left; }
+    .client-table th { background: #1e293b; color: #38bdf8; padding: 8px; border-bottom: 1px solid #334155; position: sticky; top: 0; }
+    .client-table td { padding: 8px; border-bottom: 1px solid #1e293b; font-family: monospace; color: #cbd5e1; user-select: none; -webkit-user-select: none; }
 
-    /* Bottom Navigation Bar */
-    .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #1e293b; border-top: 1px solid #334155; display: flex; justify-content: space-around; padding: 10px 0; z-index: 99999; }
-    .nav-item { display: flex; flex-direction: column; align-items: center; color: #94a3b8; font-size: 11px; cursor: pointer; gap: 4px; }
-    .nav-item.active { color: #22c55e; font-weight: bold; }
-    .nav-item i { font-size: 18px; }
+    /* Bottom Navigation Bar Updates */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 60px; background-color: #1e293b; border-top: 1px solid #334155; display: flex; justify-content: space-around; align-items: center; z-index: 1000; padding: 0 5px; }
+    .nav-item { background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #94a3b8; font-size: 10px; cursor: pointer; outline: none; flex: 1; text-decoration: none; }
+    .nav-item i { font-size: 16px; margin-bottom: 3px; }
+    .nav-item.active { color: #38bdf8; font-weight: bold; }
+
+    /* Naya Game Tab UI & Game Overlay */
+    #gameCanvas { background: #050b14; border: 2px solid #38bdf8; border-radius: 12px; width: 100%; height: 320px; display: block; margin: 0 auto; box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); }
+    .game-controls { display: flex; justify-content: space-around; align-items: center; margin-top: 10px; gap: 10px; }
+    .game-btn { flex: 1; padding: 12px 0; background: #1e293b; border: 1px solid #38bdf8; color: #38bdf8; font-size: 18px; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: center; }
+    .game-btn:active { background: #38bdf8; color: #0f172a; }
 
     #toast { position: fixed; bottom: 75px; left: 50%; transform: translateX(-50%); background: #22c55e; color: #0f172a; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 12px; z-index: 100000; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+
     .hidden { display: none !important; }
+    table { width: 100%; font-size: 11px; border-collapse: collapse; margin-top: 6px; }
+    th, td { border: 1px solid #334155; padding: 5px; text-align: left; color: #cbd5e1; user-select: none; }
+
+    .act-btn { padding: 4px 8px; font-size: 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 2px; }
+    .act-btn.view { background: #38bdf8; color: #0f172a; }
+    .act-btn.del { background: #ef4444; color: #fff; }
+
+    #userDrawerModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); z-index: 99999; justify-content: flex-end; }
+    .drawer-card { width: 260px; height: 100%; background: #1e293b; border-left: 2px solid #38bdf8; padding: 20px; display: flex; flex-direction: column; gap: 15px; box-shadow: -5px 0 25px rgba(0,0,0,0.5); }
+
+    #activityModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); z-index: 999999; align-items: center; justify-content: center; padding: 15px; }
+    .activity-card { background: #1e293b; border: 2px solid #38bdf8; border-radius: 14px; width: 100%; max-width: 450px; max-height: 85vh; display: flex; flex-direction: column; padding: 15px; gap: 10px; overflow: hidden; }
+
+    .duty-off-box { background: rgba(239, 68, 68, 0.15); border: 2px solid #ef4444; border-radius: 12px; padding: 15px; margin-top: 10px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; }
+    .duty-off-title { font-size: 18px; font-weight: bold; color: #ef4444; }
+    .duty-off-msg { font-size: 12px; color: #cbd5e1; }
+    .team-lead-btn { background: #38bdf8; color: #0f172a; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; }
   </style>
 </head>
-<body>
+<body oncontextmenu="return false;" onclick="unlockAudioContext()">
 
-  <!-- SPLASH / ONBOARDING / ADMIN MODALS -->
+  <!-- SPLASH / ONBOARDING / ADMIN MODAL OVERLAY -->
   <div id="splashScreen">
-    <!-- User Login Portal -->
     <div class="splash-card" id="onboardingBox">
-      <div class="splash-logo-circle"><i class="fas fa-headset"></i></div>
+      <div class="splash-logo-circle">
+        <i class="fas fa-headset"></i>
+      </div>
       <div>
-        <h2 style="font-size: 18px; color: #22c55e; font-weight: bold;">User Login Portal</h2>
-        <p style="font-size: 11px; color: #94a3b8;">Registered Name aur Phone Number dalein</p>
+        <h2 style="font-size: 18px; color: #22c55e; font-weight: bold; margin-bottom: 2px;">User Login Portal</h2>
+        <p style="font-size: 11px; color: #94a3b8;">Admin dwara authorized mobile number se login karein</p>
       </div>
       <div style="width: 100%; text-align: left;">
         <label style="font-size: 11px; color: #cbd5e1;">Your Name:</label>
-        <input type="text" id="loginName" class="app-input" placeholder="Registered Name">
+        <input type="text" id="loginName" class="app-input" placeholder="Registered Naam">
       </div>
       <div style="width: 100%; text-align: left;">
         <label style="font-size: 11px; color: #cbd5e1;">Your Phone Number:</label>
         <input type="tel" id="loginPhone" class="app-input" placeholder="Registered Mobile Number">
       </div>
-      <button class="app-btn" onclick="processUserLogin()">Login to Duty</button>
+
+      <div id="dutyOffContainer" class="hidden duty-off-box">
+        <div class="duty-off-title">🚫 Duty Off / Access Denied</div>
+        <div class="duty-off-msg" id="dutyOffSubText">Aapki shift chalu nahi hai ya aap authorized nahi hain. Admin se sampark karein.</div>
+        <a href="tel:8920226993" class="team-lead-btn">
+          <i class="fas fa-phone-alt"></i> Call Team Leader
+        </a>
+      </div>
+
+      <button class="app-btn" id="loginBtn" onclick="processUserLogin()">Login to Duty</button>
+      
+      <!-- ADD TO HOME SCREEN BUTTON HERE -->
       <button class="app-btn btn-install" id="installAppBtn" onclick="installAppPrompt()">
         <i class="fas fa-arrow-down-to-square"></i> Add to Home Screen
       </button>
+
       <div class="admin-link" onclick="showAdminAuthView()">Admin Access (Code Required)</div>
     </div>
 
-    <!-- Admin Authentication Code -->
+    <!-- Admin Code Login View -->
     <div class="splash-card hidden" id="adminAuthBox">
-      <div class="splash-logo-circle" style="background: linear-gradient(135deg, #38bdf8, #0284c7);"><i class="fas fa-user-shield"></i></div>
+      <div class="splash-logo-circle" style="background: linear-gradient(135deg, #38bdf8, #0284c7);">
+        <i class="fas fa-user-shield"></i>
+      </div>
       <h2 style="font-size: 18px; color: #38bdf8; font-weight: bold;">Admin Login</h2>
       <div style="width: 100%; text-align: left;">
         <label style="font-size: 11px; color: #cbd5e1;">Enter 4-Digit Code:</label>
@@ -92,126 +202,273 @@
     </div>
 
     <!-- Admin Control Center -->
-    <div class="splash-card hidden" id="adminControlBox" style="max-width: 450px; max-height: 90vh; overflow-y: auto; padding: 12px; gap: 8px;">
-      <h2 style="font-size: 16px; color: #38bdf8; font-weight: bold;">⚙️ Admin Control Center</h2>
-
-      <!-- Shift & Register User -->
+    <div class="splash-card hidden" id="adminControlBox" style="max-width: 450px; max-height: 94vh; overflow-y: auto; padding: 12px; gap: 8px;">
+      <h2 style="font-size: 16px; color: #38bdf8; font-weight: bold; margin-bottom: 2px;">⚙️ Admin Control Center</h2>
+      
       <div style="width: 100%; text-align: left; background: #0f172a; padding: 8px; border-radius: 8px; border: 1px solid #334155;">
-        <span style="font-size: 11px; font-weight: bold; color: #22c55e;">➕ Add / Update Authorized User</span>
-        <div style="display: flex; items-center: center; gap: 6px; margin: 4px 0;">
-          <input type="checkbox" id="noShiftCheck" onchange="toggleShiftInputs(this)">
-          <label for="noShiftCheck" style="font-size: 11px; color: #cbd5e1;">No Shift (Direct 24hr Access)</label>
+        <span style="font-size: 11px; font-weight: bold; color: #22c55e;" id="adminFormTitle">➕ Add / Update Authorized User</span>
+        
+        <div style="margin-top: 4px; display: flex; align-items: center; gap: 6px;">
+          <input type="checkbox" id="admNoShiftCheck" style="width: 14px; height: 14px; accent-color: #38bdf8; cursor: pointer;" onchange="toggleShiftInputs()">
+          <label style="font-size: 10px; color: #38bdf8; font-weight: bold; cursor: pointer;" for="admNoShiftCheck">No Shift (Direct 24hr Access)</label>
         </div>
-        <div style="display: flex; gap: 4px;">
-          <input type="text" id="regUserName" class="app-input" placeholder="User Name">
-          <input type="tel" id="regUserPhone" class="app-input" placeholder="User Phone">
+
+        <div style="display: flex; gap: 6px; margin-top: 4px;">
+          <input type="text" id="admUserName" class="app-input" placeholder="User Name">
+          <input type="tel" id="admUserPhone" class="app-input" placeholder="User Phone">
         </div>
-        <div id="shiftTimeControls" style="display: flex; gap: 4px; margin-top: 4px;">
-          <div style="flex: 1;">
-            <label style="font-size: 9px; color: #94a3b8;">Shift Start Time (24hr):</label>
-            <input type="time" id="shiftStartTime" class="app-input" value="10:00">
+
+        <div id="shiftInputsContainer" style="display: flex; gap: 6px; margin-top: 6px;">
+          <div style="flex:1;">
+            <label style="font-size: 9px; color:#cbd5e1;">Shift Start Time (24hr):</label>
+            <input type="time" id="admShiftStart" class="app-input" value="10:00">
           </div>
-          <div style="flex: 1;">
-            <label style="font-size: 9px; color: #94a3b8;">Shift Duration (Hours):</label>
-            <input type="number" id="shiftDuration" class="app-input" value="9" placeholder="Hours">
+          <div style="flex:1;">
+            <label style="font-size: 9px; color:#cbd5e1;">Shift Duration (Hours):</label>
+            <input type="number" id="admShiftDuration" class="app-input" placeholder="e.g. 8 or 10" value="9" min="1" max="24">
           </div>
         </div>
-        <button class="app-btn" style="background:#22c55e; margin-top: 6px;" onclick="adminSaveUser()">Save / Register User</button>
+
+        <button class="app-btn" style="background:#22c55e; padding: 6px; font-size: 11px; margin-top: 6px;" onclick="saveUserScheduleByAdmin()">Save / Register User</button>
       </div>
 
-      <!-- Assign Numbers -->
       <div style="width: 100%; text-align: left; background: #0f172a; padding: 8px; border-radius: 8px; border: 1px solid #334155;">
         <span style="font-size: 11px; font-weight: bold; color: #38bdf8;">📞 Assign Numbers to User</span>
         <div style="display: flex; gap: 4px; margin-top: 4px;">
           <input type="tel" id="admTargetUserPhone" class="app-input" style="flex:1;" placeholder="Target User Phone">
           <button class="app-btn" style="background:#38bdf8; width: auto; padding: 6px 12px; margin:0;" onclick="adminAssignNumbersToUser()">Assign</button>
         </div>
-        <textarea id="admAssignedNumbers" class="app-input" style="height: 50px; resize: none; margin-top:4px;" placeholder="Paste numbers here (har line mein ek)..."></textarea>
+        <textarea id="admAssignedNumbers" class="app-input" style="height: 38px; resize: none; margin-top:4px;" placeholder="Paste numbers here..."></textarea>
       </div>
 
-      <!-- Authorized Users List with View & Delete -->
-      <div style="width: 100%; text-align: left; background: #0f172a; padding: 8px; border-radius: 8px; border: 1px solid #334155;">
-        <span style="font-size: 11px; font-weight: bold; color: #eab308;">👥 Authorized Users List:</span>
-        <div id="adminUsersList" style="margin-top: 4px;">
-          <div style="font-size: 11px; color: #94a3b8;">Loading users...</div>
+      <div style="width: 100%; text-align: left;">
+        <span style="font-size: 11px; font-weight: bold; color: #38bdf8;">Authorized Users List:</span>
+        <div id="adminUserListTable" style="max-height: 150px; overflow-y: auto;"></div>
+      </div>
+
+      <button class="app-btn" style="background:#ef4444; padding: 6px; font-size: 11px; margin-top: 2px;" onclick="closeAdminAndGoLogin()">Exit Admin Panel</button>
+    </div>
+  </div>
+
+  <div id="activityModal">
+    <div class="activity-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid #334155; padding-bottom:6px;">
+        <span style="font-size:13px; font-weight:bold; color:#38bdf8;" id="activityUserTitle">User Activity</span>
+        <button onclick="closeActivityModal()" style="background:none; border:none; color:#ef4444; font-size:16px; cursor:pointer;">✖</button>
+      </div>
+      <div id="activitySummaryContent" style="font-size:11px; color:#cbd5e1; display:flex; flex-direction:column; gap:6px;"></div>
+      <div style="flex:1; overflow-y:auto;" id="activityDetailsTable"></div>
+    </div>
+  </div>
+
+  <div id="userDrawerModal" onclick="closeUserDrawer()">
+    <div class="drawer-card" onclick="event.stopPropagation()">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px;">
+        <span style="font-size: 14px; font-weight: bold; color: #38bdf8;">👤 Account Options</span>
+        <button onclick="closeUserDrawer()" style="background: none; border: none; color: #ef4444; font-size: 18px; cursor: pointer;">✖</button>
+      </div>
+      
+      <div style="font-size: 12px; color: #cbd5e1;">
+        Logged User: <br><strong id="drawerUserName" style="color:#22c55e;">-</strong>
+      </div>
+
+      <button class="app-btn" style="background: #eab308; color: #0f172a;" onclick="switchUserAccount()">🔄 Switch Account</button>
+      <button class="app-btn" style="background: #ef4444; color: #fff;" onclick="userLogout()">🚪 Logout</button>
+    </div>
+  </div>
+
+  <div id="toast"><span id="toastText">Copied! 📋</span></div>
+
+  <div class="top-slider" id="topSliderBar">
+    <div style="display: flex; align-items: center; flex: 1; overflow: hidden;">
+      <div class="calling-man-icon" id="sliderIcon">
+        <i class="fas fa-desktop"></i>
+      </div>
+      <div class="computer-wave-flow">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <div class="slider-track">
+        <div class="slider-text">Smart Dialer</div>
+      </div>
+      <div class="live-call-container">
+        <div class="call-info-text">
+          <span>🟢 Calling Running... <span class="call-timer-badge" id="liveCallTimer">00:00</span></span>
+          <span class="call-info-number" id="activeCallNum">---</span>
+        </div>
+        <div class="voice-waves">
+          <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
         </div>
       </div>
-
-      <button class="app-btn" style="background:#ef4444; padding: 6px; font-size: 11px;" onclick="closeAdminAndGoLogin()">Exit Admin Panel</button>
     </div>
-  </div>
-
-  <div id="toast"><span id="toastText">Done! 📋</span></div>
-
-  <!-- Top Bar -->
-  <div class="top-slider">
-    <div style="display: flex; align-items: center; gap: 8px;">
-      <i class="fas fa-desktop calling-man-icon"></i>
-      <div class="slider-text">Smart Dialer (Realtime Connected)</div>
-    </div>
-    <div class="shake-icon" onclick="showAdminAuthView()"><i class="fas fa-user-shield"></i></div>
-  </div>
-
-  <!-- MAIN TAB CONTENT -->
-  <!-- Tab 1: Home / Leads -->
-  <div id="tab-home" class="tab-content">
-    <div class="inputs-row">
-      <div class="add-box">
-        <label style="font-size: 10px; color: #38bdf8; font-weight: bold;">➕ Assigned Numbers:</label>
-        <textarea id="bulkInput" readonly placeholder="Admin dwara bheje gaye numbers yahan dikhenge..."></textarea>
+    
+    <div class="top-bar-right">
+      <div class="user-menu-btn" onclick="openUserDrawer()" title="User Menu">
+        <i class="fas fa-bars"></i>
+      </div>
+      <div class="shake-icon" onclick="showAdminAuthView()" style="cursor: pointer;" title="Admin Access">
+        <i class="fas fa-user-shield"></i>
+      </div>
+      <div class="top-bar-wave">
+        <span></span><span></span><span></span><span></span>
       </div>
     </div>
+  </div>
+
+  <!-- TAB HOME (Previously Dialer) -->
+  <div id="tab-home" class="tab-content active">
+    <div class="summary-section">
+      <div style="font-size: 12px; font-weight: bold; color: #38bdf8; margin-left: 2px;">📊 Categorized Lists</div>
+      <div class="summary-grid">
+        <div class="summary-box int">
+          <div class="summary-header">
+            <span class="summary-title" style="color:#22c55e;">👍 Int (<span id="countInt">0</span>)</span>
+            <button class="copy-btn" onclick="copyText('listInt')">📋</button>
+          </div>
+          <div class="summary-list" id="listInt">Koi nahi</div>
+        </div>
+        <div class="summary-box not-int">
+          <div class="summary-header">
+            <span class="summary-title" style="color:#ef4444;">👎 Not (<span id="countNotInt">0</span>)</span>
+            <button class="copy-btn" onclick="copyText('listNotInt')">📋</button>
+          </div>
+          <div class="summary-list" id="listNotInt">Koi nahi</div>
+        </div>
+        <div class="summary-box time-box">
+          <div class="summary-header">
+            <span class="summary-title" style="color:#eab308;">⏰ Time (<span id="countTime">0</span>)</span>
+            <button class="copy-btn" onclick="copyText('listTime')">📋</button>
+          </div>
+          <div class="summary-list" id="listTime">Koi nahi</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="inputs-row">
+      <div class="add-box">
+        <label style="font-size: 10px; color: #25D366; font-weight: bold;">💬 WA Message:</label>
+        <textarea id="defaultMsg" placeholder="Message yahan likhein..."></textarea>
+      </div>
+      <div class="add-box">
+        <label style="font-size: 10px; color: #38bdf8; font-weight: bold;">➕ Add Numbers:</label>
+        <textarea id="bulkInput" placeholder="Numbers paste karein..."></textarea>
+        
+        <div class="btn-row">
+          <button class="btn-danger" onclick="clearAllNumbers()">🗑 Clear</button>
+          <button class="btn-primary" onclick="addBulkNumbers()">+ Add</button>
+          <input type="file" id="excelFileInput" accept=".xlsx, .xls" style="display:none;" onchange="handleExcelUpload(event)">
+          <button class="btn-excel" onclick="document.getElementById('excelFileInput').click()">📊 Excel</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-bar">
+      <span>Total: <b id="totalCount" style="color:#38bdf8;">0</b></span>
+      <span>Called: <b id="calledCount" style="color:#ef4444;">0</b></span>
+      <span>Pending: <b id="pendingCount" style="color:#22c55e;">0</b></span>
+    </div>
+
     <div id="numbersContainer" class="container"></div>
   </div>
 
-  <!-- Tab 2: Analytics -->
-  <div id="tab-analytics" class="tab-content hidden">
-    <div class="add-box" style="text-align: center; padding: 20px;">
-      <i class="fas fa-chart-line" style="font-size: 30px; color: #38bdf8; margin-bottom: 10px;"></i>
-      <h3>Call Analytics</h3>
-      <p style="font-size: 12px; color: #94a3b8; margin-top: 5px;">Today's Total Dialed Calls: <strong style="color: #22c55e;" id="totalCallsCount">0</strong></p>
+  <!-- TAB CLIENTS -->
+  <div id="tab-clients" class="tab-content">
+    <div class="tab-view-box">
+      <div class="tab-title">
+        <span>👥 Client Database</span>
+      </div>
+      
+      <div class="client-filter-box">
+        <select id="clientFilterStatus" onchange="renderClientDatabase()">
+          <option value="ALL">All Statuses</option>
+          <option value="INTERESTED">Interested Only</option>
+          <option value="NOT_INTERESTED">Not Interested Only</option>
+          <option value="TIME">Callback/Time Only</option>
+        </select>
+        <input type="text" id="clientSearchInput" placeholder="Search number or note..." oninput="renderClientDatabase()">
+      </div>
+
+      <div class="client-table-container">
+        <table class="client-table">
+          <thead>
+            <tr>
+              <th>Number</th>
+              <th>Status</th>
+              <th>Callback / Note</th>
+            </tr>
+          </thead>
+          <tbody id="clientTableBody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
-  <!-- Tab 3: Game -->
-  <div id="tab-game" class="tab-content hidden">
-    <div class="add-box" style="text-align: center; padding: 20px;">
-      <i class="fas fa-gamepad" style="font-size: 30px; color: #eab308; margin-bottom: 10px;"></i>
-      <h3>Jet Fighter Game</h3>
-      <p style="font-size: 12px; color: #94a3b8; margin-top: 5px;">Mini game module ready.</p>
+  <!-- TAB GAME (CENTER GAME BUTTON content) -->
+  <div id="tab-game" class="tab-content">
+    <div class="tab-view-box" style="text-align: center;">
+      <div class="tab-title">
+        <span>🛩️ Fighter Jet Air Combat</span>
+        <span id="gameScore" style="color:#22c55e; font-size:14px;">Score: 0</span>
+      </div>
+      
+      <!-- Canvas Fighter Jet Game -->
+      <canvas id="gameCanvas" width="300" height="300"></canvas>
+      
+      <div class="game-controls">
+        <button class="game-btn" onclick="moveJetLeft()">◀ Left</button>
+        <button class="game-btn" style="background:#22c55e; color:#0f172a;" onclick="shootBullet()">🚀 Fire</button>
+        <button class="game-btn" onclick="moveJetRight()">Right ▶️</button>
+      </div>
+      <button class="app-btn" style="margin-top:10px; background:#eab308; color:#0f172a;" onclick="startJetGame()">🔄 Restart Game</button>
     </div>
   </div>
 
-  <!-- Tab 4: Settings -->
-  <div id="tab-settings" class="tab-content hidden">
-    <div class="add-box" style="padding: 15px;">
-      <h3 style="margin-bottom: 10px; color: #38bdf8;">App Settings</h3>
-      <p style="font-size: 12px; color: #cbd5e1;">Logged-in User: <span id="currentUserDisp">-</span></p>
-      <button class="app-btn" style="background: #ef4444; margin-top: 15px;" onclick="logoutUser()">Logout</button>
+  <!-- TAB MY CALL (Previously History) -->
+  <div id="tab-mycall" class="tab-content">
+    <div class="tab-view-box">
+      <div class="tab-title">
+        <span>📞 My Call History</span>
+      </div>
+      <div id="historyListContainer"></div>
     </div>
   </div>
 
-  <!-- BOTTOM NAVIGATION BAR -->
+  <!-- TAB SUPPORT -->
+  <div id="tab-support" class="tab-content">
+    <div class="tab-view-box">
+      <div class="tab-title"><span>💬 Support & Help</span></div>
+      <div style="text-align:center; padding:20px;">
+        <a href="https://wa.me/918920226993" target="_blank" style="color:#25D366; font-weight:bold; font-size:16px; text-decoration:none;">
+          <i class="fab fa-whatsapp" style="font-size:30px;"></i><br>Chat with Admin Support
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPDATED BOTTOM NAVIGATION BAR WITH HOME, CLIENTS, CENTER GAME, MY CALL, SUPPORT -->
   <div class="bottom-nav">
-    <div class="nav-item active" onclick="switchTab('home', this)">
-      <i class="fas fa-phone"></i>
-      <span>Leads</span>
-    </div>
-    <div class="nav-item" onclick="switchTab('analytics', this)">
-      <i class="fas fa-chart-pie"></i>
-      <span>Analytics</span>
-    </div>
-    <div class="nav-item" onclick="switchTab('game', this)">
-      <i class="fas fa-gamepad"></i>
-      <span>Game</span>
-    </div>
-    <div class="nav-item" onclick="switchTab('settings', this)">
-      <i class="fas fa-cog"></i>
-      <span>Settings</span>
-    </div>
+    <button class="nav-item active" onclick="switchTab('home', this)">
+      <i class="fas fa-home"></i>
+      <span>Home</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('clients', this)">
+      <i class="fas fa-users"></i>
+      <span>Clients</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('game', this)">
+      <i class="fas fa-gamepad" style="color: #22c55e; font-size: 20px;"></i>
+      <span style="color: #22c55e; font-weight: bold;">Game</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('mycall', this)">
+      <i class="fas fa-phone-volume"></i>
+      <span>My Call</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('support', this)">
+      <i class="fas fa-headset"></i>
+      <span>Support</span>
+    </button>
   </div>
 
-  <!-- FIREBASE ENGINE MODULE -->
+  <!-- Firebase Scripts -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, set, get, child, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -239,29 +496,82 @@
     window.dbRemove = remove;
   </script>
 
-  <!-- APP MAIN LOGIC SCRIPT -->
   <script>
+    let numbersList = [];
+    let callHistory = [];
+    let currentUser = null;
+    let liveCallTimerInterval = null;
     let deferredPrompt = null;
-    let currentUserPhone = null;
+
+    // Add to Home Screen PWA Event Handling
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const installBtn = document.getElementById('installAppBtn');
+      if (installBtn) installBtn.style.display = 'flex';
+    });
+
+    async function installAppPrompt() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          showToast("App Home Screen par Add ho gayi hai!");
+        }
+        deferredPrompt = null;
+      } else {
+        alert("Aap browser menu (3-dots) par jaakar 'Add to Home screen' ya 'Install App' par click karke bhi app install kar sakte hain.");
+      }
+    }
+
+    window.onload = async function() {
+      const savedUser = localStorage.getItem('smart_dialer_user');
+      if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        
+        try {
+          const snapshot = await window.dbGet(window.dbChild(window.dbRef(window.db), 'users/' + currentUser.phone));
+          if(!snapshot.exists()) {
+            localStorage.removeItem('smart_dialer_user');
+            currentUser = null;
+            showUserLoginView();
+            document.getElementById('dutyOffSubText').innerText = "Aapka account Admin dwara hata diya gaya hai. Re-onboarding ke liye Admin se sampark karein.";
+            document.getElementById('dutyOffContainer').classList.remove('hidden');
+            document.getElementById('loginBtn').classList.add('hidden');
+            return;
+          }
+
+          document.getElementById('splashScreen').style.display = 'none';
+          document.getElementById('drawerUserName').innerText = currentUser.name;
+          loadUserDataFromFirebase();
+        } catch(e) {
+          console.error("Firebase Initialization Delay", e);
+        }
+      }
+    };
 
     function showToast(msg) {
-      const toast = document.getElementById('toast');
+      const t = document.getElementById('toast');
       document.getElementById('toastText').innerText = msg;
-      toast.style.display = 'block';
-      setTimeout(() => { toast.style.display = 'none'; }, 2500);
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 2000);
     }
 
-    function switchTab(tabName, el) {
-      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-      document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+    function unlockAudioContext() {}
+
+    function switchTab(tabId, el) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('tab-' + tabId).classList.add('active');
+      if(el) el.classList.add('active');
       
-      document.getElementById('tab-' + tabName).classList.remove('hidden');
-      if (el) el.classList.add('active');
+      if(tabId === 'clients') renderClientDatabase();
+      if(tabId === 'mycall') renderCallHistory();
+      if(tabId === 'game') startJetGame();
     }
 
-    function toggleShiftInputs(cb) {
-      document.getElementById('shiftTimeControls').style.display = cb.checked ? 'none' : 'flex';
-    }
+    function openUserDrawer() { document.getElementById('userDrawerModal').style.display = 'flex'; }
+    function closeUserDrawer() { document.getElementById('userDrawerModal').style.display = 'none'; }
 
     function showAdminAuthView() {
       document.getElementById('onboardingBox').classList.add('hidden');
@@ -270,205 +580,543 @@
 
     function showUserLoginView() {
       document.getElementById('adminAuthBox').classList.add('hidden');
-      document.getElementById('adminControlBox').classList.add('hidden');
+      document.getElementById('dutyOffContainer').classList.add('hidden');
+      document.getElementById('loginBtn').classList.remove('hidden');
       document.getElementById('onboardingBox').classList.remove('hidden');
     }
 
     function verifyAdminCode() {
       const code = document.getElementById('adminCodeInput').value.trim();
-      if (code === "1234") { 
+      if(code === "9950") {
         document.getElementById('adminAuthBox').classList.add('hidden');
         document.getElementById('adminControlBox').classList.remove('hidden');
-        loadAdminUsersList();
+        loadAdminUserList();
       } else {
-        alert("Galat Code! Correct password enter karein.");
+        alert("Galat Admin Code!");
       }
     }
 
     function closeAdminAndGoLogin() {
+      document.getElementById('adminControlBox').classList.add('hidden');
       showUserLoginView();
     }
 
-    // ADMIN: Save/Register User with Shift
-    function adminSaveUser() {
-      const name = document.getElementById('regUserName').value.trim();
-      const phone = document.getElementById('regUserPhone').value.trim();
-      const noShift = document.getElementById('noShiftCheck').checked;
-      const startTime = document.getElementById('shiftStartTime').value;
-      const duration = document.getElementById('shiftDuration').value;
-
-      if (!name || !phone) {
-        alert("Kripya User Name aur Phone Number dalein!");
-        return;
-      }
-
-      window.dbSet(window.dbRef(window.db, 'users/' + phone), {
-        name: name,
-        phone: phone,
-        noShift: noShift,
-        startTime: noShift ? null : startTime,
-        duration: noShift ? null : duration,
-        registeredAt: Date.now()
-      }).then(() => {
-        showToast("User Save Ho Gaya!");
-        document.getElementById('regUserName').value = '';
-        document.getElementById('regUserPhone').value = '';
-        loadAdminUsersList();
-      }).catch((error) => {
-        alert("Error: " + error.message);
-      });
+    function toggleShiftInputs() {
+      const isChecked = document.getElementById('admNoShiftCheck').checked;
+      document.getElementById('shiftInputsContainer').style.display = isChecked ? 'none' : 'flex';
     }
 
-    // ADMIN: Fetch Users List & Render with View/Delete Actions
-    function loadAdminUsersList() {
-      const usersRef = window.dbRef(window.db, 'users');
-      window.dbOnValue(usersRef, (snapshot) => {
-        const container = document.getElementById('adminUsersList');
-        container.innerHTML = '';
-        const data = snapshot.val();
-
-        if (!data) {
-          container.innerHTML = '<div style="font-size: 11px; color: #94a3b8;">Koi users nahi hain.</div>';
-          return;
-        }
-
-        Object.keys(data).forEach((phone) => {
-          const u = data[phone];
-          const shiftInfo = u.noShift ? "24hr Access" : `Shift: ${u.startTime} (${u.duration} hrs)`;
-          
-          const item = document.createElement('div');
-          item.className = 'user-list-item';
-          item.innerHTML = `
-            <div style="font-size:12px; font-weight:bold; color:#f8fafc;">${u.name} (${u.phone})</div>
-            <div style="font-size:10px; color:#38bdf8;">${shiftInfo}</div>
-            <div class="user-actions">
-              <button class="btn-sm btn-blue" onclick="adminQuickAssign('${u.phone}')">Assign Leads</button>
-              <button class="btn-sm btn-blue" onclick="adminViewUserLeads('${u.phone}')">View Leads</button>
-              <button class="btn-sm btn-red" onclick="adminDeleteUser('${u.phone}')">Delete</button>
-            </div>
-          `;
-          container.appendChild(item);
-        });
-      });
-    }
-
-    function adminQuickAssign(phone) {
-      document.getElementById('admTargetUserPhone').value = phone;
-      showToast("Phone set: " + phone);
-    }
-
-    function adminViewUserLeads(phone) {
-      window.dbGet(window.dbChild(window.dbRef(window.db), 'assigned_leads/' + phone)).then((snap) => {
-        if (snap.exists() && snap.val().numbers) {
-          alert("Leads for " + phone + ":\n\n" + snap.val().numbers.join('\n'));
-        } else {
-          alert("Is user ki koi assigned leads nahi hain.");
-        }
-      });
-    }
-
-    function adminDeleteUser(phone) {
-      if (confirm("Kya aap sach me is user ko delete karna chahte hain?")) {
-        window.dbRemove(window.dbRef(window.db, 'users/' + phone)).then(() => {
-          window.dbRemove(window.dbRef(window.db, 'assigned_leads/' + phone));
-          showToast("User Delete Ho Gaya!");
-        });
-      }
-    }
-
-    // ADMIN: Push Leads
-    function adminAssignNumbersToUser() {
-      const targetPhone = document.getElementById('admTargetUserPhone').value.trim();
-      const numbersText = document.getElementById('admAssignedNumbers').value.trim();
-
-      if (!targetPhone || !numbersText) {
-        alert("Target Phone aur Numbers dono bharein!");
-        return;
-      }
-
-      const numbersArray = numbersText.split('\n').filter(num => num.trim() !== '');
-
-      window.dbSet(window.dbRef(window.db, 'assigned_leads/' + targetPhone), {
-        numbers: numbersArray,
-        updatedAt: Date.now()
-      }).then(() => {
-        showToast("Leads Realtime Assign Ho Gayi!");
-        document.getElementById('admAssignedNumbers').value = '';
-      }).catch((error) => { alert("Error: " + error.message); });
-    }
-
-    // USER LOGIN ENGINE
-    function processUserLogin() {
+    async function processUserLogin() {
       const name = document.getElementById('loginName').value.trim();
       const phone = document.getElementById('loginPhone').value.trim();
+      
+      if(!name || !phone) return alert("Kripya Naam aur Mobile Number dono bharein!");
 
-      if (!name || !phone) {
-        alert("Kripya Registered Name aur Phone Number dalein!");
+      const snapshot = await window.dbGet(window.dbChild(window.dbRef(window.db), 'users/' + phone));
+      
+      if(!snapshot.exists()) {
+        document.getElementById('dutyOffSubText').innerText = "Yeh Mobile Number Admin dwara authorized nahi hai. Admin se onboarding karayein.";
+        document.getElementById('dutyOffContainer').classList.remove('hidden');
+        document.getElementById('loginBtn').classList.add('hidden');
         return;
       }
 
-      currentUserPhone = phone;
-      document.getElementById('currentUserDisp').innerText = `${name} (${phone})`;
-      document.getElementById('splashScreen').style.display = 'none';
-      showToast("Logged in successfully!");
+      const userData = snapshot.val();
 
-      listenForUserLeads(phone);
+      if (!userData.noShift) {
+        const now = new Date();
+        const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+        const shiftStartStr = userData.shiftStart || "10:00";
+        const [sHour, sMin] = shiftStartStr.split(':').map(Number);
+        const startMinutes = sHour * 60 + sMin;
+        
+        const durationHours = parseInt(userData.shiftDuration || 9); 
+        const endMinutes = startMinutes + (durationHours * 60);
+
+        let isAllowed = false;
+
+        if (endMinutes < 1440) {
+          isAllowed = currentMinutes >= startMinutes && currentMinutes <= endMinutes;
+        } else {
+          const overflowEnd = endMinutes % 1440;
+          isAllowed = currentMinutes >= startMinutes || currentMinutes <= overflowEnd;
+        }
+
+        if (!isAllowed) {
+          document.getElementById('dutyOffSubText').innerText = `Aapki shift time (${shiftStartStr} se ${durationHours} ghante) abhi active nahi hai.`;
+          document.getElementById('dutyOffContainer').classList.remove('hidden');
+          document.getElementById('loginBtn').classList.add('hidden');
+          return;
+        }
+      }
+
+      currentUser = { name: userData.name || name, phone: phone };
+      localStorage.setItem('smart_dialer_user', JSON.stringify(currentUser));
+      document.getElementById('drawerUserName').innerText = currentUser.name;
+      document.getElementById('splashScreen').style.display = 'none';
+      loadUserDataFromFirebase();
     }
 
-    function renderNumbersUI(numbers) {
+    function userLogout() {
+      localStorage.removeItem('smart_dialer_user');
+      location.reload();
+    }
+
+    function switchUserAccount() {
+      closeUserDrawer();
+      document.getElementById('splashScreen').style.display = 'flex';
+      showUserLoginView();
+    }
+
+    async function saveUserScheduleByAdmin() {
+      const name = document.getElementById('admUserName').value.trim();
+      const phone = document.getElementById('admUserPhone').value.trim();
+      const noShift = document.getElementById('admNoShiftCheck').checked;
+      const shiftStart = document.getElementById('admShiftStart').value || "10:00";
+      const shiftDuration = document.getElementById('admShiftDuration').value || "9";
+
+      if(!name || !phone) return alert("Name aur Phone zaroori hai!");
+
+      const userData = { 
+        name: name, 
+        phone: phone,
+        noShift: noShift,
+        shiftStart: shiftStart,
+        shiftDuration: shiftDuration
+      };
+
+      await window.dbSet(window.dbRef(window.db, 'users/' + phone), userData);
+      alert(`User ${name} successfully registered/updated!`);
+      document.getElementById('admUserName').value = '';
+      document.getElementById('admUserPhone').value = '';
+      loadAdminUserList();
+    }
+
+    async function loadAdminUserList() {
+      const snapshot = await window.dbGet(window.dbChild(window.dbRef(window.db), 'users'));
+      const tableDiv = document.getElementById('adminUserListTable');
+      if(!snapshot.exists()) {
+        tableDiv.innerHTML = "<p style='font-size:10px; color:#cbd5e1;'>Koi User Nahi Hai</p>";
+        return;
+      }
+
+      let html = "<table><tr><th>Name</th><th>Shift</th><th>Action</th></tr>";
+      snapshot.forEach(childSnap => {
+        const u = childSnap.val();
+        const userName = u.name || "User";
+        const userPhone = u.phone || childSnap.key;
+        const shiftText = u.noShift ? "No Shift (24hr)" : `${u.shiftStart || '10:00'} (${u.shiftDuration || 9}h)`;
+
+        html += `<tr>
+          <td>${userName}<br><small style="color:#94a3b8;">${userPhone}</small></td>
+          <td>${shiftText}</td>
+          <td>
+            <button class="act-btn view" onclick="viewUserActivity('${userPhone}', '${userName}')">👁 View</button>
+            <button class="act-btn del" onclick="deleteUserByAdmin('${userPhone}')">🗑 Delete</button>
+          </td>
+        </tr>`;
+      });
+      html += "</table>";
+      tableDiv.innerHTML = html;
+    }
+
+    async function viewUserActivity(phone, name) {
+      document.getElementById('activityUserTitle').innerText = `📊 Activity: ${name} (${phone})`;
+      document.getElementById('activityModal').style.display = 'flex';
+      
+      const snapshot = await window.dbGet(window.dbChild(window.dbRef(window.db), 'assigned_numbers/' + phone));
+      const summaryDiv = document.getElementById('activitySummaryContent');
+      const detailsDiv = document.getElementById('activityDetailsTable');
+
+      if(!snapshot.exists()) {
+        summaryDiv.innerHTML = "<span style='color:#ef4444;'>Is user ko koi numbers assigned nahi hain.</span>";
+        detailsDiv.innerHTML = "";
+        return;
+      }
+
+      const list = snapshot.val() || [];
+      let total = list.length;
+      let called = 0, intCount = 0, notIntCount = 0, timeCount = 0;
+
+      let tableHtml = "<table><tr><th>Number</th><th>Status</th><th>Note</th></tr>";
+
+      list.forEach(item => {
+        if(item.called) called++;
+        if(item.status === 'INTERESTED') intCount++;
+        if(item.status === 'NOT_INTERESTED') notIntCount++;
+        if(item.status === 'TIME') timeCount++;
+
+        tableHtml += `<tr>
+          <td>${item.number}</td>
+          <td><span style="color:${item.status === 'INTERESTED' ? '#22c55e' : item.status === 'NOT_INTERESTED' ? '#ef4444' : '#eab308'}">${item.status}</span></td>
+          <td>${item.note || '-'}</td>
+        </tr>`;
+      });
+
+      tableHtml += "</table>";
+
+      summaryDiv.innerHTML = `
+        <div>Total: <b>${total}</b> | Called: <b style="color:#ef4444;">${called}</b> | Pending: <b style="color:#22c55e;">${total - called}</b></div>
+        <div>👍 Interested: <b style="color:#22c55e;">${intCount}</b> | 👎 Not Interested: <b style="color:#ef4444;">${notIntCount}</b> | ⏰ Callback: <b style="color:#eab308;">${timeCount}</b></div>
+      `;
+
+      detailsDiv.innerHTML = tableHtml;
+    }
+
+    function closeActivityModal() {
+      document.getElementById('activityModal').style.display = 'none';
+    }
+
+    async function deleteUserByAdmin(phone) {
+      if(confirm(`Kya aap number ${phone} ko permanently delete karna chahte hain? Delete hone par yeh user re-onboarding bina login nahi kar sakega.`)) {
+        await window.dbRemove(window.dbRef(window.db, 'users/' + phone));
+        alert("User Access Revoked / Deleted!");
+        loadAdminUserList();
+      }
+    }
+
+    async function adminAssignNumbersToUser() {
+      const phone = document.getElementById('admTargetUserPhone').value.trim();
+      const numsText = document.getElementById('admAssignedNumbers').value.trim();
+
+      if(!phone || !numsText) return alert("Phone aur Numbers dono bharein!");
+
+      const parsed = numsText.split(/[\n,]+/).map(n => n.trim()).filter(n => n.length >= 10);
+      const newItems = parsed.map(num => ({ number: num, status: 'NONE', note: '' }));
+
+      await window.dbSet(window.dbRef(window.db, 'assigned_numbers/' + phone), newItems);
+      alert(`${parsed.length} Numbers user ko assign ho gaye!`);
+      document.getElementById('admAssignedNumbers').value = '';
+    }
+
+    function loadUserDataFromFirebase() {
+      if(!currentUser) return;
+      
+      window.dbOnValue(window.dbRef(window.db, 'assigned_numbers/' + currentUser.phone), (snapshot) => {
+        if(snapshot.exists()) {
+          numbersList = snapshot.val() || [];
+          renderNumbers();
+        } else {
+          numbersList = [];
+          renderNumbers();
+        }
+      });
+    }
+
+    function saveUserDataToFirebase() {
+      if(!currentUser) return;
+      window.dbSet(window.dbRef(window.db, 'assigned_numbers/' + currentUser.phone), numbersList);
+    }
+
+    function addBulkNumbers() {
+      const text = document.getElementById('bulkInput').value.trim();
+      if(!text) return;
+
+      const parsed = text.split(/[\n,]+/).map(n => n.trim()).filter(n => n.length >= 10);
+      parsed.forEach(num => {
+        if(!numbersList.some(item => item.number === num)) {
+          numbersList.push({ number: num, status: 'NONE', note: '' });
+        }
+      });
+
+      document.getElementById('bulkInput').value = '';
+      saveUserDataToFirebase();
+      renderNumbers();
+    }
+
+    function clearAllNumbers() {
+      if(confirm("Kya aap saare numbers hatana chahte hain?")) {
+        numbersList = [];
+        saveUserDataToFirebase();
+        renderNumbers();
+      }
+    }
+
+    function renderNumbers() {
       const container = document.getElementById('numbersContainer');
       container.innerHTML = '';
 
-      if (!numbers || numbers.length === 0) {
-        container.innerHTML = '<div style="text-align:center; color:#94a3b8; font-size:12px; margin-top:20px;">Koi numbers assigned nahi hain.</div>';
-        return;
-      }
+      let calledCount = 0;
+      let intList = [], notIntList = [], timeList = [];
 
-      numbers.forEach((phoneNum) => {
+      numbersList.forEach((item, index) => {
+        if(item.called) calledCount++;
+        if(item.status === 'INTERESTED') intList.push(item.number);
+        if(item.status === 'NOT_INTERESTED') notIntList.push(item.number);
+        if(item.status === 'TIME') timeList.push(item.number + (item.note ? ` (${item.note})` : ''));
+
         const card = document.createElement('div');
         card.className = 'num-card-box';
         card.innerHTML = `
           <div class="action-row">
-            <a href="tel:${phoneNum}" class="num-card"><i class="fas fa-phone-alt" style="margin-right:8px;"></i> ${phoneNum}</a>
+            <a href="tel:${item.number}" class="num-card ${item.called ? 'called' : ''}" onclick="handleCallClick(${index}, '${item.number}')">
+              📞 ${item.number}
+            </a>
+            <a href="https://wa.me/91${item.number}?text=${encodeURIComponent(document.getElementById('defaultMsg').value)}" target="_blank" class="wa-btn">
+              <i class="fab fa-whatsapp"></i>
+            </a>
+            <button class="delete-single-btn" onclick="deleteSingleNumber(${index})">🗑</button>
+          </div>
+          <div class="status-buttons-row">
+            <button class="sub-btn ${item.status === 'INTERESTED' ? 'interested' : ''}" onclick="setStatus(${index}, 'INTERESTED')">👍 Int</button>
+            <button class="sub-btn ${item.status === 'NOT_INTERESTED' ? 'not-interested' : ''}" onclick="setStatus(${index}, 'NOT_INTERESTED')">👎 Not</button>
+            <button class="sub-btn ${item.status === 'TIME' ? 'time' : ''}" onclick="setStatus(${index}, 'TIME')">⏰ Time</button>
           </div>
         `;
         container.appendChild(card);
       });
+
+      document.getElementById('totalCount').innerText = numbersList.length;
+      document.getElementById('calledCount').innerText = calledCount;
+      document.getElementById('pendingCount').innerText = numbersList.length - calledCount;
+
+      document.getElementById('countInt').innerText = intList.length;
+      document.getElementById('listInt').innerText = intList.join('\n') || 'Koi nahi';
+
+      document.getElementById('countNotInt').innerText = notIntList.length;
+      document.getElementById('listNotInt').innerText = notIntList.join('\n') || 'Koi nahi';
+
+      document.getElementById('countTime').innerText = timeList.length;
+      document.getElementById('listTime').innerText = timeList.join('\n') || 'Koi nahi';
     }
 
-    function listenForUserLeads(userPhone) {
-      if (!userPhone) return;
-      const userLeadsRef = window.dbRef(window.db, 'assigned_leads/' + userPhone);
+    function deleteSingleNumber(index) {
+      numbersList.splice(index, 1);
+      saveUserDataToFirebase();
+      renderNumbers();
+    }
 
-      window.dbOnValue(userLeadsRef, (snapshot) => {
-        const data = snapshot.val();
-        if (data && data.numbers) {
-          document.getElementById('bulkInput').value = data.numbers.join('\n');
-          document.getElementById('totalCallsCount').innerText = data.numbers.length;
-          renderNumbersUI(data.numbers);
-          showToast("Naye Leads Auto-Sync ho gaye!");
-        } else {
-          renderNumbersUI([]);
-          document.getElementById('totalCallsCount').innerText = '0';
-        }
+    function setStatus(index, status) {
+      if(status === 'TIME') {
+        const timeVal = prompt("Call Time / Note daalein (e.g. 4:00 PM ya Kal Call Karein):");
+        numbersList[index].note = timeVal || '';
+      }
+      numbersList[index].status = status;
+      saveUserDataToFirebase();
+      renderNumbers();
+    }
+
+    function handleCallClick(index, number) {
+      numbersList[index].called = true;
+      saveUserDataToFirebase();
+      
+      document.getElementById('topSliderBar').classList.add('live-calling');
+      document.getElementById('activeCallNum').innerText = number;
+      
+      let sec = 0;
+      clearInterval(liveCallTimerInterval);
+      liveCallTimerInterval = setInterval(() => {
+        sec++;
+        let m = Math.floor(sec/60).toString().padStart(2, '0');
+        let s = (sec%60).toString().padStart(2, '0');
+        document.getElementById('liveCallTimer').innerText = `${m}:${s}`;
+      }, 1000);
+
+      callHistory.unshift({
+        number: number,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+      
+      renderNumbers();
+    }
+
+    function handleExcelUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+
+        jsonData.forEach(row => {
+          row.forEach(cell => {
+            if (cell) {
+              const str = cell.toString().trim();
+              if (str.length >= 10 && /^\d+$/.test(str.replace(/\D/g, ''))) {
+                const cleanNum = str.replace(/\D/g, '').slice(-10);
+                if (!numbersList.some(item => item.number === cleanNum)) {
+                  numbersList.push({ number: cleanNum, status: 'NONE', note: '' });
+                }
+              }
+            }
+          });
+        });
+
+        saveUserDataToFirebase();
+        renderNumbers();
+        showToast("Excel Imported Successfully!");
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function copyText(id) {
+      const text = document.getElementById(id).innerText;
+      navigator.clipboard.writeText(text);
+      showToast("Copied to Clipboard!");
+    }
+
+    function renderClientDatabase() {
+      const tbody = document.getElementById('clientTableBody');
+      tbody.innerHTML = '';
+      
+      const filter = document.getElementById('clientFilterStatus').value;
+      const search = document.getElementById('clientSearchInput').value.toLowerCase();
+
+      numbersList.forEach(item => {
+        if(filter !== 'ALL' && item.status !== filter) return;
+        if(search && !item.number.includes(search) && !item.note.toLowerCase().includes(search)) return;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><a style="color:#fff; text-decoration:none;" href="tel:${item.number}">📞 ${item.number}</a></td>
+          <td><span style="color:${item.status === 'INTERESTED' ? '#22c55e' : item.status === 'NOT_INTERESTED' ? '#ef4444' : '#eab308'}; font-weight:bold;">${item.status}</span></td>
+          <td>${item.note || '-'}</td>
+        `;
+        tbody.appendChild(tr);
       });
     }
 
-    function logoutUser() {
-      location.reload();
+    function renderCallHistory() {
+      const container = document.getElementById('historyListContainer');
+      container.innerHTML = callHistory.length === 0 ? '<p style="font-size:11px; color:#cbd5e1;">Koi history nahi hai</p>' : '';
+
+      callHistory.forEach(item => {
+        const div = document.createElement('div');
+        div.style.cssText = 'background:#0f172a; border:1px solid #334155; border-radius:8px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;';
+        div.innerHTML = `
+          <div>
+            <div style="font-size:14px; font-weight:bold; color:#22c55e;">${item.number}</div>
+            <div style="font-size:11px; color:#94a3b8;">Called at: ${item.time}</div>
+          </div>
+          <a href="tel:${item.number}" class="wa-btn" style="background:#38bdf8;">Call Again</a>
+        `;
+        container.appendChild(div);
+      });
     }
 
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      document.getElementById('installAppBtn').style.display = 'flex';
-    });
+    /* ----------------------------------------------------
+       🛩️ FIGHTER JET AIR COMBAT GAME LOGIC (HTML5 Canvas)
+    ---------------------------------------------------- */
+    let canvas, ctx, jetLoop;
+    let playerJet = { x: 135, y: 250, w: 30, h: 30, speed: 15 };
+    let bullets = [];
+    let enemies = [];
+    let score = 0;
+    let gameOver = false;
 
-    async function installAppPrompt() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        deferredPrompt = null;
+    function startJetGame() {
+      canvas = document.getElementById('gameCanvas');
+      ctx = canvas.getContext('2d');
+      
+      score = 0;
+      gameOver = false;
+      playerJet.x = canvas.width / 2 - 15;
+      bullets = [];
+      enemies = [];
+      
+      document.getElementById('gameScore').innerText = "Score: " + score;
+      
+      if(jetLoop) clearInterval(jetLoop);
+      jetLoop = setInterval(updateJetGame, 1000 / 30);
+    }
+
+    function moveJetLeft() {
+      if (playerJet.x > 0) playerJet.x -= playerJet.speed;
+    }
+
+    function moveJetRight() {
+      if (playerJet.x < canvas.width - playerJet.w) playerJet.x += playerJet.speed;
+    }
+
+    function shootBullet() {
+      if(!gameOver) {
+        bullets.push({ x: playerJet.x + playerJet.w/2 - 2, y: playerJet.y, w: 4, h: 10 });
+      }
+    }
+
+    function updateJetGame() {
+      if (gameOver) return;
+
+      // Clear Canvas
+      ctx.fillStyle = '#050b14';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw Player Jet (Blue Fighter)
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.moveTo(playerJet.x + playerJet.w/2, playerJet.y);
+      ctx.lineTo(playerJet.x, playerJet.y + playerJet.h);
+      ctx.lineTo(playerJet.x + playerJet.w, playerJet.y + playerJet.h);
+      ctx.closePath();
+      ctx.fill();
+
+      // Bullets Update & Draw
+      ctx.fillStyle = '#eab308';
+      for(let i = 0; i < bullets.length; i++) {
+        bullets[i].y -= 8;
+        ctx.fillRect(bullets[i].x, bullets[i].y, bullets[i].w, bullets[i].h);
+        if(bullets[i].y < 0) bullets.splice(i, 1);
+      }
+
+      // Spawn Enemy Jets Randomly
+      if (Math.random() < 0.05) {
+        enemies.push({ x: Math.random() * (canvas.width - 25), y: -20, w: 25, h: 25, speed: Math.random() * 2 + 2 });
+      }
+
+      // Enemies Update & Collision Check
+      ctx.fillStyle = '#ef4444';
+      for(let i = 0; i < enemies.length; i++) {
+        enemies[i].y += enemies[i].speed;
+        
+        // Draw Enemy (Red Fighter)
+        ctx.beginPath();
+        ctx.moveTo(enemies[i].x, enemies[i].y);
+        ctx.lineTo(enemies[i].x + enemies[i].w, enemies[i].y);
+        ctx.lineTo(enemies[i].x + enemies[i].w/2, enemies[i].y + enemies[i].h);
+        ctx.closePath();
+        ctx.fill();
+
+        // Bullet Hit Check
+        for(let j = 0; j < bullets.length; j++) {
+          if (bullets[j] && enemies[i] &&
+              bullets[j].x < enemies[i].x + enemies[i].w &&
+              bullets[j].x + bullets[j].w > enemies[i].x &&
+              bullets[j].y < enemies[i].y + enemies[i].h &&
+              bullets[j].y + bullets[j].h > enemies[i].y) {
+            
+            enemies.splice(i, 1);
+            bullets.splice(j, 1);
+            score += 10;
+            document.getElementById('gameScore').innerText = "Score: " + score;
+            break;
+          }
+        }
+
+        // Enemy Collision with Player Jet
+        if (enemies[i] && 
+            playerJet.x < enemies[i].x + enemies[i].w &&
+            playerJet.x + playerJet.w > enemies[i].x &&
+            playerJet.y < enemies[i].y + enemies[i].h &&
+            playerJet.y + playerJet.h > enemies[i].y) {
+          
+          gameOver = true;
+          clearInterval(jetLoop);
+          ctx.fillStyle = '#ef4444';
+          ctx.font = '20px sans-serif';
+          ctx.fillText("💥 GAME OVER!", 70, 150);
+          ctx.font = '12px sans-serif';
+          ctx.fillStyle = '#ffffff';
+          ctx.fillText("Restart par click karke dubara khele", 50, 180);
+          return;
+        }
+
+        if(enemies[i] && enemies[i].y > canvas.height) {
+          enemies.splice(i, 1);
+        }
       }
     }
   </script>
