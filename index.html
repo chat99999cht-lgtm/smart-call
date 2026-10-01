@@ -3,28 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#0f172a">
-  <title>Auto Dialer & Lead Manager with Support System</title>
+  <title>Auto Dialer & Lead Manager with Jet Fighter Game</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  
-  <!-- Web App Manifest for Add to Home Screen PWA -->
-  <link rel="manifest" id="manifestPlaceholder">
-
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body { font-family: system-ui, -apple-system, sans-serif; background-color: #0f172a; color: #f8fafc; padding: 10px; padding-bottom: 90px; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
     
     /* Splash & Onboarding Styles */
     #splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0f172a, #1e293b, #0f172a); z-index: 999999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; transition: opacity 0.5s ease; }
-    .splash-card { background: rgba(30, 41, 59, 0.85); border: 2px solid #22c55e; border-radius: 24px; padding: 30px 20px; width: 100%; max-width: 380px; box-shadow: 0 0 40px rgba(34, 197, 94, 0.4); display: flex; flex-direction: column; align-items: center; gap: 15px; backdrop-filter: blur(10px); }
-    .splash-logo-circle { width: 70px; height: 70px; background: linear-gradient(135deg, #22c55e, #15803d); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 32px; box-shadow: 0 6px 20px rgba(34, 197, 94, 0.6); }
+    .splash-card { background: rgba(30, 41, 59, 0.85); border: 2px solid #22c55e; border-radius: 24px; padding: 20px; width: 100%; max-width: 420px; box-shadow: 0 0 40px rgba(34, 197, 94, 0.4); display: flex; flex-direction: column; align-items: center; gap: 10px; backdrop-filter: blur(10px); }
+    .splash-logo-circle { width: 60px; height: 60px; background: linear-gradient(135deg, #22c55e, #15803d); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 28px; box-shadow: 0 6px 20px rgba(34, 197, 94, 0.6); }
 
-    .app-input { width: 100%; background: #0f172a; border: 1px solid #334155; color: #fff; padding: 10px; border-radius: 8px; font-size: 13px; outline: none; margin-top: 4px; user-select: text; -webkit-user-select: text; }
+    .app-input { width: 100%; background: #0f172a; border: 1px solid #334155; color: #fff; padding: 8px 10px; border-radius: 8px; font-size: 12px; outline: none; margin-top: 2px; user-select: text; -webkit-user-select: text; }
     .app-input:focus { border-color: #22c55e; }
-    .app-btn { width: 100%; background: #22c55e; color: #0f172a; font-weight: bold; padding: 12px; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; margin-top: 10px; }
-    .admin-link { margin-top: 10px; font-size: 12px; color: #38bdf8; text-decoration: underline; cursor: pointer; }
+    .app-btn { width: 100%; background: #22c55e; color: #0f172a; font-weight: bold; padding: 10px; border: none; border-radius: 8px; font-size: 13px; cursor: pointer; margin-top: 6px; }
+    .btn-install { background: #eab308; color: #0f172a; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .admin-link { margin-top: 6px; font-size: 12px; color: #38bdf8; text-decoration: underline; cursor: pointer; }
 
     /* Top Bar Styling */
     .top-slider { height: 75px; background: rgba(34, 197, 94, 0.12); border: 2px solid #22c55e; border-radius: 14px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; overflow: hidden; box-shadow: 0 0 22px rgba(34, 197, 94, 0.35), inset 0 0 12px rgba(34, 197, 94, 0.2); transition: all 0.3s ease; position: relative; }
@@ -50,6 +46,8 @@
     .top-bar-wave span:nth-child(3) { animation-delay: 0.2s; height: 12px; }
     .top-bar-wave span:nth-child(4) { animation-delay: 0.4s; height: 6px; }
     @keyframes waveEffect { 0%, 100% { transform: scaleY(0.4); opacity: 0.5; } 50% { transform: scaleY(1); opacity: 1; } }
+
+    .user-menu-btn { width: 32px; height: 32px; border-radius: 50%; background: #1e293b; border: 1px solid #38bdf8; color: #38bdf8; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; }
 
     .live-call-container { display: none; align-items: center; justify-content: space-between; width: 100%; }
     .top-slider.live-calling .slider-track { display: none; }
@@ -78,14 +76,6 @@
     .copy-btn { background: #334155; color: #fff; border: none; padding: 2px 5px; border-radius: 4px; font-size: 9px; cursor: pointer; }
     .summary-list { font-family: monospace; font-size: 10px; color: #cbd5e1; height: 55px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; background: #0f172a; padding: 4px; border-radius: 6px; user-select: none; }
 
-    .partner-apps-bar { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 6px 8px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; overflow: hidden; }
-    .static-group { display: flex; gap: 6px; flex-shrink: 0; border-right: 1px solid #475569; padding-right: 6px; }
-    .slider-group { flex: 1; overflow: hidden; white-space: nowrap; position: relative; display: flex; }
-    .partner-scroll { display: inline-flex; gap: 6px; animation: partnerScroll 12s linear infinite; }
-    @keyframes partnerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-    .app-chip { background: #0f172a; border: 1px solid #475569; padding: 4px 8px; border-radius: 20px; font-size: 9px; font-weight: bold; color: #38bdf8; display: inline-flex; align-items: center; gap: 3px; flex-shrink: 0; cursor: pointer; text-decoration: none; }
-    .app-chip.pinned { border-color: #38bdf8; background: #1e293b; color: #fbbf24; }
-
     .inputs-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
     .add-box { background: #1e293b; padding: 8px; border-radius: 10px; display: flex; flex-direction: column; gap: 4px; border: 1px solid #334155; }
     textarea { width: 100%; height: 45px; background: #0f172a; color: #fff; padding: 6px; border: 1px solid #334155; border-radius: 6px; font-family: monospace; font-size: 11px; outline: none; resize: none; user-select: text; -webkit-user-select: text; }
@@ -97,8 +87,6 @@
     .btn-primary { background: #38bdf8; color: #0f172a; }
     .btn-excel { background: #107c41; color: #fff; }
 
-    .wa-queue-bar { background: #14532d; border: 1px solid #22c55e; padding: 8px 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-    .wa-queue-btn { background: #22c55e; color: #0f172a; font-weight: bold; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; }
     .stats-bar { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 8px 10px; border-radius: 8px; margin-bottom: 8px; font-size: 12px; border: 1px solid #334155; }
     .container { display: flex; flex-direction: column; gap: 8px; }
     .num-card-box { background: #1e293b; padding: 8px; border-radius: 10px; display: flex; flex-direction: column; gap: 6px; border: 1px solid #334155; }
@@ -112,7 +100,6 @@
     .sub-btn.interested { background: #0f172a; color: #22c55e; border-color: #22c55e; }
     .sub-btn.not-interested { background: #0f172a; color: #ef4444; border-color: #ef4444; }
     .sub-btn.time { background: #0f172a; color: #eab308; border-color: #eab308; }
-    .sub-btn:disabled { opacity: 0.35; cursor: not-allowed; border-color: #334155 !important; color: #64748b !important; }
 
     .tab-content { display: none; }
     .tab-content.active { display: block; }
@@ -122,91 +109,79 @@
     .client-filter-box { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
     .client-filter-box select, .client-filter-box input { width: 100%; background: #0f172a; border: 1px solid #334155; color: #fff; padding: 8px; border-radius: 6px; font-size: 11px; outline: none; }
     
-    .client-action-buttons { display: flex; gap: 6px; margin-bottom: 10px; }
-    .client-action-buttons button { flex: 1; padding: 8px; font-weight: bold; border-radius: 6px; border: none; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
     .client-table-container { max-height: 380px; overflow-y: auto; background: #0f172a; border: 1px solid #334155; border-radius: 8px; }
     .client-table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: left; }
     .client-table th { background: #1e293b; color: #38bdf8; padding: 8px; border-bottom: 1px solid #334155; position: sticky; top: 0; }
     .client-table td { padding: 8px; border-bottom: 1px solid #1e293b; font-family: monospace; color: #cbd5e1; user-select: none; -webkit-user-select: none; }
-    .badge-int { color: #22c55e; font-weight: bold; }
-    .badge-not { color: #ef4444; font-weight: bold; }
-    .badge-time { color: #eab308; font-weight: bold; }
-    
-    .client-call-link { color: #ffffff; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; gap: 6px; }
-    .client-call-link:hover { text-decoration: underline; color: #22c55e; }
-    .client-shake-phone { color: #22c55e; display: inline-block; animation: shakeEffect 0.8s infinite ease-in-out; }
 
-    .call-history-item { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; user-select: none; }
-    .history-num { font-size: 14px; font-weight: bold; font-family: monospace; color: #22c55e; }
-    .history-time { font-size: 11px; color: #94a3b8; }
-    .history-duration { font-size: 11px; font-weight: bold; color: #eab308; }
-    .history-btn-group { display: flex; gap: 6px; }
-
-    .support-card { background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 16px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
-    .support-btn { width: 100%; background: #25D366; color: #fff; font-weight: bold; font-size: 14px; padding: 12px; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2); }
-
+    /* Bottom Navigation Bar Updates */
     .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 60px; background-color: #1e293b; border-top: 1px solid #334155; display: flex; justify-content: space-around; align-items: center; z-index: 1000; padding: 0 5px; }
     .nav-item { background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #94a3b8; font-size: 10px; cursor: pointer; outline: none; flex: 1; text-decoration: none; }
     .nav-item i { font-size: 16px; margin-bottom: 3px; }
     .nav-item.active { color: #38bdf8; font-weight: bold; }
 
-    .camera-center-btn { background: linear-gradient(135deg, #38bdf8, #0284c7); color: #fff; width: 52px; height: 52px; border-radius: 50%; border: 3px solid #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.5); margin-top: -22px; cursor: pointer; }
-    .camera-center-btn i { font-size: 20px; }
-    .camera-center-btn span { font-size: 8px; font-weight: bold; }
-
-    .camera-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 99999; flex-direction: column; align-items: center; justify-content: center; padding: 12px; }
-    .camera-box { width: 96%; max-width: 460px; background: #1e293b; border: 1px solid #38bdf8; border-radius: 12px; padding: 12px; text-align: center; position: relative; max-height: 92vh; display: flex; flex-direction: column; }
-    .camera-preview { width: 100%; height: 380px; max-height: 58vh; background: #0f172a; border: 2px dashed #38bdf8; border-radius: 8px; margin: 10px 0; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
-    .camera-preview img { width: 100%; height: 100%; object-fit: contain; }
-    .ocr-loader { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.92); color: #38bdf8; font-weight: bold; font-size: 13px; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 15px; }
+    /* Naya Game Tab UI & Game Overlay */
+    #gameCanvas { background: #050b14; border: 2px solid #38bdf8; border-radius: 12px; width: 100%; height: 320px; display: block; margin: 0 auto; box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); }
+    .game-controls { display: flex; justify-content: space-around; align-items: center; margin-top: 10px; gap: 10px; }
+    .game-btn { flex: 1; padding: 12px 0; background: #1e293b; border: 1px solid #38bdf8; color: #38bdf8; font-size: 18px; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: center; }
+    .game-btn:active { background: #38bdf8; color: #0f172a; }
 
     #toast { position: fixed; bottom: 75px; left: 50%; transform: translateX(-50%); background: #22c55e; color: #0f172a; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 12px; z-index: 100000; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-
-    /* Alarm Ringing Modal */
-    #alarmModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.96); z-index: 9999999; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
-    .alarm-card { background: #1e293b; border: 3px solid #eab308; border-radius: 20px; padding: 25px; width: 100%; max-width: 380px; box-shadow: 0 0 50px rgba(234, 179, 8, 0.8); display: flex; flex-direction: column; align-items: center; gap: 15px; animation: alarmPulse 0.5s infinite alternate; }
-    @keyframes alarmPulse { 0% { transform: scale(1); box-shadow: 0 0 25px rgba(234, 179, 8, 0.5); } 100% { transform: scale(1.04); box-shadow: 0 0 60px rgba(234, 179, 8, 0.9); } }
-    .alarm-bell-icon { font-size: 60px; color: #eab308; animation: ringBell 0.3s infinite ease-in-out; }
-    @keyframes ringBell { 0% { transform: rotate(0deg); } 20% { transform: rotate(-30deg); } 40% { transform: rotate(30deg); } 60% { transform: rotate(-20deg); } 80% { transform: rotate(20deg); } 100% { transform: rotate(0deg); } }
-    .alarm-phone-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #22c55e; color: #fff; text-decoration: none; font-weight: bold; font-size: 16px; padding: 12px 20px; border-radius: 10px; width: 100%; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.5); user-select: none; }
-    .alarm-stop-btn { background: #ef4444; color: #fff; font-weight: bold; border: none; padding: 12px 20px; border-radius: 8px; font-size: 14px; cursor: pointer; width: 100%; }
-
-    /* Shift Alert Modal */
-    #shiftAlertModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.96); z-index: 99999999; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
-    .shift-alert-card { background: #1e293b; border: 3px solid #ef4444; border-radius: 20px; padding: 25px; width: 100%; max-width: 380px; box-shadow: 0 0 50px rgba(239, 68, 68, 0.8); display: flex; flex-direction: column; align-items: center; gap: 15px; }
 
     .hidden { display: none !important; }
     table { width: 100%; font-size: 11px; border-collapse: collapse; margin-top: 6px; }
     th, td { border: 1px solid #334155; padding: 5px; text-align: left; color: #cbd5e1; user-select: none; }
+
+    .act-btn { padding: 4px 8px; font-size: 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 2px; }
+    .act-btn.view { background: #38bdf8; color: #0f172a; }
+    .act-btn.del { background: #ef4444; color: #fff; }
+
+    #userDrawerModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); z-index: 99999; justify-content: flex-end; }
+    .drawer-card { width: 260px; height: 100%; background: #1e293b; border-left: 2px solid #38bdf8; padding: 20px; display: flex; flex-direction: column; gap: 15px; box-shadow: -5px 0 25px rgba(0,0,0,0.5); }
+
+    #activityModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); z-index: 999999; align-items: center; justify-content: center; padding: 15px; }
+    .activity-card { background: #1e293b; border: 2px solid #38bdf8; border-radius: 14px; width: 100%; max-width: 450px; max-height: 85vh; display: flex; flex-direction: column; padding: 15px; gap: 10px; overflow: hidden; }
+
+    .duty-off-box { background: rgba(239, 68, 68, 0.15); border: 2px solid #ef4444; border-radius: 12px; padding: 15px; margin-top: 10px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; }
+    .duty-off-title { font-size: 18px; font-weight: bold; color: #ef4444; }
+    .duty-off-msg { font-size: 12px; color: #cbd5e1; }
+    .team-lead-btn { background: #38bdf8; color: #0f172a; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; }
   </style>
 </head>
-<body oncontextmenu="return false;" onclick="unlockAudioContext()">
+<body oncontextmenu="return false;">
 
   <!-- SPLASH / ONBOARDING / ADMIN MODAL OVERLAY -->
   <div id="splashScreen">
-    
-    <!-- User Onboarding View -->
     <div class="splash-card" id="onboardingBox">
       <div class="splash-logo-circle">
         <i class="fas fa-headset"></i>
       </div>
       <div>
         <h2 style="font-size: 18px; color: #22c55e; font-weight: bold; margin-bottom: 2px;">User Login Portal</h2>
-        <p style="font-size: 11px; color: #94a3b8;">Apna Name aur Number daal kar login karein</p>
+        <p style="font-size: 11px; color: #94a3b8;">Admin dwara authorized mobile number se login karein</p>
       </div>
       <div style="width: 100%; text-align: left;">
         <label style="font-size: 11px; color: #cbd5e1;">Your Name:</label>
-        <input type="text" id="loginName" class="app-input" placeholder="Apna Naam Likhein">
+        <input type="text" id="loginName" class="app-input" placeholder="Registered Naam">
       </div>
       <div style="width: 100%; text-align: left;">
-        <label style="font-size: 11px; color: #cbd5e1;">Your Number:</label>
-        <input type="tel" id="loginPhone" class="app-input" placeholder="10-Digit Mobile Number">
+        <label style="font-size: 11px; color: #cbd5e1;">Your Phone Number:</label>
+        <input type="tel" id="loginPhone" class="app-input" placeholder="Registered Mobile Number">
       </div>
-      <button class="app-btn" onclick="processUserLogin()">Login to Duty</button>
+
+      <div id="dutyOffContainer" class="hidden duty-off-box">
+        <div class="duty-off-title">🚫 Duty Off / Access Denied</div>
+        <div class="duty-off-msg" id="dutyOffSubText">Aapki shift chalu nahi hai ya aap authorized nahi hain. Admin se sampark karein.</div>
+        <a href="tel:8920226993" class="team-lead-btn">
+          <i class="fas fa-phone-alt"></i> Call Team Leader
+        </a>
+      </div>
+
+      <button class="app-btn" id="loginBtn" onclick="processUserLogin()">Login to Duty</button>
       
-      <!-- Add to Home Screen Button -->
-      <button id="pwaInstallBtn" class="app-btn" style="background: #38bdf8; color: #0f172a; margin-top: 8px;" onclick="triggerPWAInstall()">
-        <i class="fas fa-download"></i> Add to Home Screen
+      <!-- ADD TO HOME SCREEN BUTTON HERE -->
+      <button class="app-btn btn-install" id="installAppBtn" onclick="installAppPrompt()">
+        <i class="fas fa-arrow-down-to-square"></i> Add to Home Screen
       </button>
 
       <div class="admin-link" onclick="showAdminAuthView()">Admin Access (Code Required)</div>
@@ -226,90 +201,56 @@
       <div class="admin-link" onclick="showUserLoginView()">Back to User Login</div>
     </div>
 
-    <!-- Admin Management Panel View -->
-    <div class="splash-card hidden" id="adminControlBox" style="max-width: 420px; max-height: 90vh; overflow-y: auto;">
-      <h2 style="font-size: 18px; color: #38bdf8; font-weight: bold;">⚙️ Admin Management Panel</h2>
+    <!-- Admin Control Center -->
+    <div class="splash-card hidden" id="adminControlBox" style="max-width: 450px; max-height: 94vh; overflow-y: auto; padding: 12px; gap: 8px;">
+      <h2 style="font-size: 16px; color: #38bdf8; font-weight: bold; margin-bottom: 2px;">⚙️ Admin Control Center</h2>
       
-      <div style="width: 100%; text-align: left; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 10px;">
-        <span style="font-size: 12px; font-weight: bold; color: #22c55e;">👤 User & Shift Scheduling</span>
+      <div style="width: 100%; text-align: left; background: #0f172a; padding: 8px; border-radius: 8px; border: 1px solid #334155;">
+        <span style="font-size: 11px; font-weight: bold; color: #22c55e;" id="adminFormTitle">➕ Add / Update Authorized User</span>
         
-        <div style="margin-top: 6px; display: flex; align-items: center; gap: 6px;">
-          <input type="checkbox" id="admNoShiftCheck" onchange="toggleNoShiftFields()" style="width: 16px; height: 16px; accent-color: #38bdf8; cursor: pointer;">
-          <label style="font-size: 11px; color: #38bdf8; font-weight: bold; cursor: pointer;" for="admNoShiftCheck">No Shift / Direct Access (Bina Time Restriction ke)</label>
+        <div style="margin-top: 4px; display: flex; align-items: center; gap: 6px;">
+          <input type="checkbox" id="admNoShiftCheck" style="width: 14px; height: 14px; accent-color: #38bdf8; cursor: pointer;">
+          <label style="font-size: 10px; color: #38bdf8; font-weight: bold; cursor: pointer;" for="admNoShiftCheck">No Shift (Direct 24hr Access)</label>
         </div>
 
-        <div style="margin-top: 6px;"><label style="font-size: 10px; color: #cbd5e1;">User Name / ID:</label><input type="text" id="admUserName" class="app-input" placeholder="Employee Name ya Number Name"></div>
-        <div style="margin-top: 4px;"><label style="font-size: 10px; color: #cbd5e1;">User Phone:</label><input type="tel" id="admUserPhone" class="app-input" placeholder="10-Digit Phone Number"></div>
-        
-        <div id="shiftTimeFieldsGroup">
-          <div style="display: flex; gap: 6px; margin-top: 4px;">
-            <div style="flex: 1;"><label style="font-size: 10px; color: #cbd5e1;">Start:</label><input type="time" id="admDutyStart" class="app-input"></div>
-            <div style="flex: 1;"><label style="font-size: 10px; color: #cbd5e1;">End:</label><input type="time" id="admDutyEnd" class="app-input"></div>
+        <div style="display: flex; gap: 6px; margin-top: 4px;">
+          <input type="text" id="admUserName" class="app-input" placeholder="User Name">
+          <input type="tel" id="admUserPhone" class="app-input" placeholder="User Phone">
+        </div>
+
+        <div id="shiftInputsContainer" style="display: flex; gap: 6px; margin-top: 6px;">
+          <div style="flex:1;">
+            <label style="font-size: 9px; color:#cbd5e1;">Shift Start Time (24hr):</label>
+            <input type="time" id="admShiftStart" class="app-input" value="10:00">
           </div>
-          <div style="display: flex; gap: 6px; margin-top: 4px;">
-            <div style="flex: 1;"><label style="font-size: 10px; color: #eab308;">Break Start:</label><input type="time" id="admBreakStart" class="app-input"></div>
-            <div style="flex: 1;"><label style="font-size: 10px; color: #eab308;">Break End:</label><input type="time" id="admBreakEnd" class="app-input"></div>
+          <div style="flex:1;">
+            <label style="font-size: 9px; color:#cbd5e1;">Shift Duration (Hours):</label>
+            <input type="number" id="admShiftDuration" class="app-input" placeholder="e.g. 8 or 10" value="9" min="1" max="24">
           </div>
         </div>
+
+        <button class="app-btn" style="background:#22c55e; padding: 6px; font-size: 11px; margin-top: 6px;" onclick="saveUserScheduleByAdmin()">Save / Register User</button>
       </div>
 
-      <div style="width: 100%; text-align: left; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 10px;">
-        <span style="font-size: 12px; font-weight: bold; color: #38bdf8;">📞 Assign / Update User Numbers</span>
-        <div style="margin-top: 6px;">
-          <label style="font-size: 10px; color: #cbd5e1;">Target User Phone:</label>
-          <input type="tel" id="admTargetUserPhone" class="app-input" placeholder="Jis user ko number dena h uska phone">
+      <div style="width: 100%; text-align: left; background: #0f172a; padding: 8px; border-radius: 8px; border: 1px solid #334155;">
+        <span style="font-size: 11px; font-weight: bold; color: #38bdf8;">📞 Assign Numbers to User</span>
+        <div style="display: flex; gap: 4px; margin-top: 4px;">
+          <input type="tel" id="admTargetUserPhone" class="app-input" style="flex:1;" placeholder="Target User Phone">
+          <button class="app-btn" style="background:#38bdf8; width: auto; padding: 6px 12px; margin:0;" onclick="adminAssignNumbersToUser()">Assign</button>
         </div>
-        <div style="margin-top: 4px;">
-          <label style="font-size: 10px; color: #cbd5e1;">Paste Numbers:</label>
-          <textarea id="admAssignedNumbers" class="app-input" style="height: 60px; resize: none;" placeholder="Numbers yahan paste karein..."></textarea>
-        </div>
-        <button class="app-btn" style="background:#38bdf8; margin-top: 6px; padding: 8px;" onclick="adminAssignNumbersToUser()">Assign Numbers to User</button>
+        <textarea id="admAssignedNumbers" class="app-input" style="height: 38px; resize: none; margin-top:4px;" placeholder="Paste numbers here..."></textarea>
       </div>
 
-      <button class="app-btn" style="background:#22c55e;" onclick="saveUserScheduleByAdmin()">Save Schedule & Settings</button>
-      
-      <div style="width: 100%; margin-top: 10px; text-align: left;">
-        <span style="font-size: 11px; font-weight: bold; color: #38bdf8;">Registered Users & Shifts:</span>
-        <div id="adminUserListTable"></div>
+      <div style="width: 100%; text-align: left;">
+        <span style="font-size: 11px; font-weight: bold; color: #38bdf8;">Authorized Users List:</span>
+        <div id="adminUserListTable" style="max-height: 150px; overflow-y: auto;"></div>
       </div>
-      <button class="app-btn" style="background:#ef4444; margin-top: 12px;" onclick="closeAdminAndGoLogin()">Exit Admin Panel</button>
-    </div>
 
-    <!-- Access Denied / Duty Off View -->
-    <div class="splash-card hidden" id="dutyOffBox">
-      <i class="fas fa-user-slash" style="font-size: 50px; color: #ef4444;"></i>
-      <h2 style="font-size: 20px; color: #ef4444; font-weight: bold;">DUTY OFF FOR TODAY!</h2>
-      <p style="font-size: 12px; color: #f8fafc; line-height: 1.5;" id="dutyOffMsgText">Aap apne nirdharit samay se late hain!</p>
-      <button class="app-btn" style="background:#64748b;" onclick="showUserLoginView()">Try Login Again</button>
-    </div>
-
-  </div>
-
-  <!-- Shift Alarm Notification Modal -->
-  <div id="shiftAlertModal">
-    <div class="shift-alert-card">
-      <i class="fas fa-bell alarm-bell-icon" style="color: #ef4444;"></i>
-      <h3 style="font-size: 18px; color: #ef4444; font-weight: bold;" id="shiftAlertTitle">⏰ SHIFT / BREAK NOTIFICATION</h3>
-      <p style="font-size: 13px; color: #f8fafc;" id="shiftAlertText">Kripya samay par login karein!</p>
-      <button class="alarm-stop-btn" onclick="stopShiftNotificationAlert()">DISMISS / STOP SOUND</button>
+      <button class="app-btn" style="background:#ef4444; padding: 6px; font-size: 11px; margin-top: 2px;" onclick="closeAdminAndGoLogin()">Exit Admin Panel</button>
     </div>
   </div>
 
-  <div id="alarmModal">
-    <div class="alarm-card">
-      <i class="fas fa-bell alarm-bell-icon"></i>
-      <div>
-        <h3 style="font-size: 20px; color: #eab308; font-weight: bold;">⏰ CALL REMINDER ALERT!</h3>
-        <p style="font-size: 14px; color: #f8fafc; margin-top: 6px; font-weight: bold;" id="alarmCustomerInfo">Is customer ko call karne ka time ho gaya hai!</p>
-      </div>
-      <a id="alarmCallBtn" href="#" class="alarm-phone-btn" onclick="dismissAlarm()">
-        <i class="fas fa-phone-alt"></i> Call Now (<span id="alarmNumText">---</span>)
-      </a>
-      <button class="alarm-stop-btn" onclick="dismissAlarm()">STOP RINGING / DISMISS</button>
-    </div>
-  </div>
-
-  <div id="toast"><span id="toastText">Link Copied! 📋</span></div>
+  <div id="toast"><span id="toastText">Copied! 📋</span></div>
 
   <div class="top-slider" id="topSliderBar">
     <div style="display: flex; align-items: center; flex: 1; overflow: hidden;">
@@ -322,1227 +263,157 @@
       <div class="slider-track">
         <div class="slider-text">Smart Dialer</div>
       </div>
-      <div class="live-call-container">
-        <div class="call-info-text">
-          <span>🟢 Calling Running... <span class="call-timer-badge" id="liveCallTimer">00:00</span></span>
-          <span class="call-info-number" id="activeCallNum">---</span>
-        </div>
-        <div class="voice-waves">
-          <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
-        </div>
-      </div>
     </div>
     
     <div class="top-bar-right">
       <div class="shake-icon" onclick="showAdminAuthView()" style="cursor: pointer;" title="Admin Access">
         <i class="fas fa-user-shield"></i>
       </div>
-      <div class="top-bar-wave">
-        <span></span><span></span><span></span><span></span>
-      </div>
     </div>
   </div>
 
+  <!-- TAB HOME -->
   <div id="tab-home" class="tab-content active">
-    <div class="summary-section">
-      <div style="font-size: 12px; font-weight: bold; color: #38bdf8; margin-left: 2px;">📊 Categorized Lists</div>
-      <div class="summary-grid">
-        <div class="summary-box int">
-          <div class="summary-header">
-            <span class="summary-title" style="color:#22c55e;">👍 Int (<span id="countInt">0</span>)</span>
-            <button class="copy-btn" onclick="copyText('listInt')">📋</button>
-          </div>
-          <div class="summary-list" id="listInt">Koi nahi</div>
-        </div>
-        <div class="summary-box not-int">
-          <div class="summary-header">
-            <span class="summary-title" style="color:#ef4444;">👎 Not (<span id="countNotInt">0</span>)</span>
-            <button class="copy-btn" onclick="copyText('listNotInt')">📋</button>
-          </div>
-          <div class="summary-list" id="listNotInt">Koi nahi</div>
-        </div>
-        <div class="summary-box time-box">
-          <div class="summary-header">
-            <span class="summary-title" style="color:#eab308;">⏰ Time (<span id="countTime">0</span>)</span>
-            <button class="copy-btn" onclick="copyText('listTime')">📋</button>
-          </div>
-          <div class="summary-list" id="listTime">Koi nahi</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="partner-apps-bar">
-      <div class="static-group">
-        <a class="app-chip pinned" onclick="copyAngelLink()">📊 Angel One</a>
-        <span class="app-chip pinned">📈 Upstox</span>
-        <a class="app-chip pinned" onclick="copyNaviLink()">📱 Navi</a>
-      </div>
-      <div class="slider-group">
-        <div class="partner-scroll">
-          <span class="app-chip">🏦 AU Bank</span><span class="app-chip">📉 5paisa</span>
-        </div>
-      </div>
-    </div>
-
     <div class="inputs-row">
       <div class="add-box">
-        <label style="font-size: 10px; color: #25D366; font-weight: bold;">💬 WA Message:</label>
-        <textarea id="defaultMsg" placeholder="Message yahan likhein..."></textarea>
-      </div>
-      <div class="add-box">
-        <label style="font-size: 10px; color: #38bdf8; font-weight: bold;">➕ Add Numbers:</label>
-        <textarea id="bulkInput" placeholder="Numbers paste, Excel upload ya AI Cam se scan karein..."></textarea>
-        
-        <div class="btn-row">
-          <button class="btn-danger" onclick="clearAllNumbers()">🗑 Clear</button>
-          <button class="btn-primary" onclick="addBulkNumbers()">+ Add</button>
-          
-          <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" style="display:none;" onchange="importExcelFile(this)">
-          <button class="btn-excel" onclick="triggerExcelUpload()"><i class="fas fa-file-excel"></i> Excel</button>
-        </div>
+        <label style="font-size: 10px; color: #38bdf8; font-weight: bold;">➕ Assigned Numbers:</label>
+        <textarea id="bulkInput" placeholder="Numbers dikhenge yahan..."></textarea>
       </div>
     </div>
-
-    <div class="wa-queue-bar">
-      <div style="font-size:11px; font-weight:bold; color:#f8fafc;">💬 Send WA to Top 10 (<span id="queueProgress">0/0</span>)</div>
-      <button class="wa-queue-btn" id="startWaBtn" onclick="handleWaQueueClick()">🚀 Start 10-WA Queue</button>
-    </div>
-
-    <div class="stats-bar">
-      <div>Pending: <span id="pendingCount" style="color:#38bdf8;">0</span> | Total: <span id="totalCount">0</span> | Called: <span id="calledCount" style="color:#ef4444;">0</span></div>
-      <button style="background:none; border:none; color:#38bdf8; font-size:11px; cursor:pointer;" onclick="resetCalledStatus()">Reset Calls</button>
-    </div>
-
-    <div class="container" id="numberList"></div>
+    <div id="numbersContainer" class="container"></div>
   </div>
 
-  <div id="tab-clients" class="tab-content">
-    <div class="tab-view-box">
-      <div class="tab-title"><span><i class="fas fa-user-friends"></i> Client Database</span></div>
-      
-      <div class="client-filter-box">
-        <select id="clientFilterCategory" onchange="renderClientTable()">
-          <option value="all">🔍 All Categories (Interested / Not / Timing)</option>
-          <option value="interested">👍 Interested Only</option>
-          <option value="not_interested">👎 Not Interested Only</option>
-          <option value="time">⏰ Timing / Notes Only</option>
-        </select>
-        <input type="text" id="clientSearchInput" placeholder="🔍 Search number or timing..." oninput="renderClientTable()">
-      </div>
+  <!-- Firebase Module Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, set, get, child, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-      <div class="client-action-buttons">
-        <button class="btn-primary" onclick="copyFilteredClients()"><i class="fas fa-copy"></i> Copy Filtered Data</button>
-        <button class="btn-excel" onclick="downloadClientExcel()"><i class="fas fa-file-excel"></i> Download Excel</button>
-      </div>
-
-      <div class="client-table-container">
-        <table class="client-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Phone Number</th>
-              <th>Category</th>
-              <th>Timing / Details</th>
-            </tr>
-          </thead>
-          <tbody id="clientTableBody">
-            <tr><td colspan="4" style="text-align: center; color: #64748b; padding: 20px;">No client records found.</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <div id="tab-mycalls" class="tab-content">
-    <div class="tab-view-box">
-      <div class="tab-title">
-        <span><i class="fas fa-phone-alt"></i> Call History (<span id="historyCount">0</span>)</span>
-        <div class="history-btn-group">
-          <button class="copy-btn" style="background:#22c55e; color:#0f172a; font-weight:bold; padding:4px 8px; font-size:11px;" onclick="copyCallHistoryExcel()">📋 Copy All (Excel)</button>
-          <button class="copy-btn" style="background:#ef4444; color:#fff; font-weight:bold; padding:4px 8px; font-size:11px;" onclick="clearCallHistory()">🗑 Clear</button>
-        </div>
-      </div>
-      <div id="callHistoryList"></div>
-    </div>
-  </div>
-
-  <div id="tab-support" class="tab-content">
-    <div class="tab-view-box">
-      <div class="tab-title"><span><i class="fas fa-headset"></i> Support & Helpdesk</span></div>
-      <div class="support-card">
-        <i class="fab fa-whatsapp" style="font-size: 50px; color: #25D366;"></i>
-        <div>
-          <strong style="font-size: 16px; color: #f8fafc;">Need Help or Support?</strong>
-          <p style="color: #94a3b8; font-size: 12px; margin-top: 6px;">Aapko kisi bhi tarah ki madad chahiye toh seedha hamari support team se WhatsApp par chat karein.</p>
-        </div>
-        <button class="support-btn" onclick="openSupportWhatsApp()">
-          <i class="fab fa-whatsapp" style="font-size: 20px;"></i> Chat on WhatsApp
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <div class="camera-modal" id="cameraModal">
-    <div class="camera-box">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <span style="font-size: 14px; font-weight:bold; color: #38bdf8;">⚡ Fast AI Multi-OCR Scanner</span>
-        <button onclick="closeAiCamera()" style="background:none; border:none; color:#ef4444; font-size:18px; cursor:pointer;">✖</button>
-      </div>
-      <div class="camera-preview">
-        <img id="capturedImg" style="display:none;" />
-        <div id="placeholderText" style="color:#64748b; font-size:12px;">Ek sath 1 se 20 Screenshots select karke fast scan karein</div>
-        <div class="ocr-loader" id="ocrLoader">
-          <i class="fas fa-spinner fa-spin fa-2x"></i>
-          <span id="ocrStatusText">Fast Scanning Screenshots...</span>
-        </div>
-      </div>
-      <input type="file" id="cameraDirectInput" accept="image/*" capture="environment" style="display:none;" onchange="processMultipleImages(this)">
-      <input type="file" id="galleryFileInput" accept="image/*" multiple style="display:none;" onchange="processMultipleImages(this)">
-      <div style="display:flex; gap:6px;">
-        <button class="btn-primary" onclick="triggerDirectCamera()">📸 Capture Photo</button>
-        <button class="btn-primary" style="background:#22c55e;" onclick="triggerGalleryUpload()">🖼️ Select Up to 20 Photos</button>
-      </div>
-    </div>
-  </div>
-
-  <nav class="bottom-nav">
-      <button class="nav-item active" id="nav-home" onclick="switchTab('tab-home', this, true)"><i class="fas fa-home"></i><span>Home</span></button>
-      <button class="nav-item" id="nav-clients" onclick="switchTab('tab-clients', this, true)"><i class="fas fa-user-friends"></i><span>Clients</span></button>
-      <button class="camera-center-btn" onclick="openAiCamera()"><i class="fas fa-camera"></i><span>AI CAM</span></button>
-      <button class="nav-item" id="nav-mycalls" onclick="switchTab('tab-mycalls', this, true)"><i class="fas fa-phone-alt"></i><span>My Calls</span></button>
-      <button class="nav-item" id="nav-support" onclick="switchTab('tab-support', this, true)"><i class="fab fa-whatsapp" style="color: #25D366; font-size: 18px;"></i><span>Support</span></button>
-  </nav>
-
-  <!-- Notification Audio Sound -->
-  <audio id="notificationBellSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto" loop></audio>
-
-  <script>
-    // Dynamic Web Manifest for PWA Add to Home Screen
-    const pwaManifest = {
-      "name": "Smart Dialer Web App",
-      "short_name": "SmartDialer",
-      "start_url": "./",
-      "display": "standalone",
-      "background_color": "#0f172a",
-      "theme_color": "#0f172a",
-      "icons": [
-        {
-          "src": "https://cdn-icons-png.flaticon.com/512/5585/5585856.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        },
-        {
-          "src": "https://cdn-icons-png.flaticon.com/512/5585/5585856.png",
-          "sizes": "512x512",
-          "type": "image/png"
-        }
-      ]
+    const firebaseConfig = {
+      apiKey: "AIzaSyDbG-yDrll_fYXEDjLN9Ay0kwJ556Xvdeg",
+      authDomain: "smart-call-9950a.firebaseapp.com",
+      databaseURL: "https://smart-call-9950a-default-rtdb.firebaseio.com",
+      projectId: "smart-call-9950a",
+      storageBucket: "smart-call-9950a.appspot.com",
+      messagingSenderId: "965909062156",
+      appId: "1:965909062156:web:60572b1b3409a7e5284429",
+      measurementId: "G-B19VDHLM39"
     };
-    const manifestBlob = new Blob([JSON.stringify(pwaManifest)], { type: 'application/json' });
-    document.getElementById('manifestPlaceholder').setAttribute('href', URL.createObjectURL(manifestBlob));
 
-    // Register Service Worker for PWA
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        const swCode = `
-          self.addEventListener('install', e => e.waitUntil(self.skipWaiting()));
-          self.addEventListener('fetch', e => e.respondWith(fetch(e.request)));
-        `;
-        const blob = new Blob([swCode], { type: 'application/javascript' });
-        navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
-      });
-    }
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-    // PWA Add to Home Screen Prompt Setup
+    window.db = db;
+    window.dbRef = ref;
+    window.dbSet = set;
+    window.dbGet = get;
+    window.dbChild = child;
+    window.dbOnValue = onValue;
+    window.dbRemove = remove;
+  </script>
+
+  <!-- Main Logic & Realtime Functions Script -->
+  <script>
+    let numbersList = [];
     let deferredPrompt = null;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      const installBtn = document.getElementById('pwaInstallBtn');
-      if (installBtn) installBtn.style.display = 'block';
-    });
-
-    function triggerPWAInstall() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-          if (choiceResult.outcome === 'accepted') {
-            console.log('User accepted the PWA install');
-          }
-          deferredPrompt = null;
-        });
-      } else {
-        alert('App download karne ke liye Browser menu (3 dots) par click karke "Add to Home screen" select karein.');
-      }
-    }
-
-    // Anti-Copy & Security
-    document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
-    document.addEventListener('copy', function(e) {
-      if (!e.target.closest('textarea')) { e.preventDefault(); }
-    });
-
-    if (!localStorage.getItem('admin_schedules')) {
-      localStorage.setItem('admin_schedules', JSON.stringify([]));
-    }
-    if (!localStorage.getItem('admin_assigned_numbers')) {
-      localStorage.setItem('admin_assigned_numbers', JSON.stringify({}));
-    }
-
-    // Auto-Login Check & Continuous Shift Monitoring
-    window.addEventListener('DOMContentLoaded', () => {
-      checkContinuousShiftSession();
-    });
-
-    function checkContinuousShiftSession() {
-      const savedUserPhone = localStorage.getItem('logged_user_phone');
-      const savedUserName = localStorage.getItem('logged_user_name');
-      
-      if (savedUserPhone && savedUserName) {
-        let schedules = JSON.parse(localStorage.getItem('admin_schedules')) || [];
-        const record = schedules.find(s => s.phone === savedUserPhone);
-
-        if (record && !record.isNoShift && record.endTime && record.endTime !== "NO_SHIFT") {
-          const now = new Date();
-          const curInMins = now.getHours() * 60 + now.getMinutes();
-          const [eH, eM] = record.endTime.split(':').map(Number);
-          const endInMins = eH * 60 + eM;
-
-          // If current time passed shift end time -> Automatic Logout
-          if (curInMins >= endInMins) {
-            localStorage.removeItem('logged_user_phone');
-            localStorage.removeItem('logged_user_name');
-            alert('Aapki aaj ki shift timing poori ho gayi hai. Automatic Logout ho gaya hai!');
-            showUserLoginView();
-            return;
-          }
-        }
-
-        // Keep Logged In continuously during shift
-        const splash = document.getElementById('splashScreen');
-        splash.style.display = 'none';
-        loadAdminAssignedNumbersToUser(savedUserPhone);
-        updateStatsAndCategorizedLists();
-        renderList();
-      }
-    }
-
-    // Background Timer for Late Login & Break Over Notification System
-    let shiftNotificationTimeout = null;
-
-    setInterval(() => {
-      const loggedPhone = localStorage.getItem('logged_user_phone');
-      let schedules = JSON.parse(localStorage.getItem('admin_schedules')) || [];
-
-      // Check for user login shift completion
-      if (loggedPhone) {
-        checkContinuousShiftSession();
-        return;
-      }
-
-      // Check for un-logged registered users for shift notification (10 mins late)
-      const now = new Date();
-      const curInMins = now.getHours() * 60 + now.getMinutes();
-
-      schedules.forEach(user => {
-        if (!user.isNoShift && user.startTime && user.startTime !== "NO_SHIFT") {
-          const [sH, sM] = user.startTime.split(':').map(Number);
-          const startInMins = sH * 60 + sM;
-          
-          // Exact 10 mins late check (e.g. 10:10 AM)
-          if (curInMins === startInMins + 10) {
-            trigger1MinShiftNotification("⏰ SHIFT LOGIN ALARM!", `${user.name}, aapki shift start hue 10 minute ho chuke hain! Kripya turant login karein.`);
-          }
-        }
-
-        // Lunch / Shift Break 5-minute Overdue Check (e.g., 30 min break + 5 min extra = 35 mins late)
-        if (!user.isNoShift && user.breakEnd) {
-          const [bEH, bEM] = user.breakEnd.split(':').map(Number);
-          const breakEndInMins = bEH * 60 + bEM;
-          
-          if (curInMins === breakEndInMins + 5) {
-            trigger1MinShiftNotification("⏰ BREAK OVER ALARM!", `${user.name}, aapka lunch break khatam ho gaya hai! Login karke kaam shuru karein.`);
-          }
-        }
-      });
-    }, 15000); // Check every 15 seconds
-
-    function trigger1MinShiftNotification(title, msg) {
-      const modal = document.getElementById('shiftAlertModal');
-      document.getElementById('shiftAlertTitle').innerText = title;
-      document.getElementById('shiftAlertText').innerText = msg;
-      modal.style.display = 'flex';
-
-      const sound = document.getElementById('notificationBellSound');
-      if (sound) {
-        sound.currentTime = 0;
-        sound.play().catch(e => console.log('Audio autoplay restricted'));
-      }
-
-      // Automatically Stop sound after 1 minute (60 seconds)
-      if (shiftNotificationTimeout) clearTimeout(shiftNotificationTimeout);
-      shiftNotificationTimeout = setTimeout(() => {
-        stopShiftNotificationAlert();
-      }, 60000); 
-    }
-
-    function stopShiftNotificationAlert() {
-      document.getElementById('shiftAlertModal').style.display = 'none';
-      const sound = document.getElementById('notificationBellSound');
-      if (sound) {
-        sound.pause();
-        sound.currentTime = 0;
-      }
-      if (shiftNotificationTimeout) {
-        clearTimeout(shiftNotificationTimeout);
-        shiftNotificationTimeout = null;
-      }
-    }
-
-    function showUserLoginView() {
-      document.getElementById('splashScreen').style.display = 'flex';
-      document.getElementById('splashScreen').style.opacity = '1';
-      document.getElementById('onboardingBox').classList.remove('hidden');
-      document.getElementById('adminAuthBox').classList.add('hidden');
-      document.getElementById('adminControlBox').classList.add('hidden');
-      document.getElementById('dutyOffBox').classList.add('hidden');
-    }
-
-    function showAdminAuthView() {
-      document.getElementById('splashScreen').style.display = 'flex';
-      document.getElementById('splashScreen').style.opacity = '1';
-      document.getElementById('onboardingBox').classList.add('hidden');
-      document.getElementById('adminAuthBox').classList.remove('hidden');
-      document.getElementById('adminControlBox').classList.add('hidden');
-      document.getElementById('dutyOffBox').classList.add('hidden');
-    }
-
-    function verifyAdminCode() {
-      const inputCode = document.getElementById('adminCodeInput').value;
-      if (inputCode === "9953") {
-        document.getElementById('adminAuthBox').classList.add('hidden');
-        document.getElementById('adminControlBox').classList.remove('hidden');
-        renderAdminUserTable();
-      } else {
-        alert("Galat code! Admin access ke liye sahi 9953 code dalein.");
-      }
-    }
-
-    function toggleNoShiftFields() {
-      const isChecked = document.getElementById('admNoShiftCheck').checked;
-      const fieldsGroup = document.getElementById('shiftTimeFieldsGroup');
-      fieldsGroup.style.display = isChecked ? 'none' : 'block';
-    }
-
-    function saveUserScheduleByAdmin() {
-      const name = document.getElementById('admUserName').value.trim();
-      const phone = document.getElementById('admUserPhone').value.trim();
-      const isNoShift = document.getElementById('admNoShiftCheck').checked;
-      
-      const startTime = isNoShift ? "NO_SHIFT" : document.getElementById('admDutyStart').value;
-      const endTime = isNoShift ? "NO_SHIFT" : document.getElementById('admDutyEnd').value;
-      const breakStart = isNoShift ? "" : document.getElementById('admBreakStart').value;
-      const breakEnd = isNoShift ? "" : document.getElementById('admBreakEnd').value;
-
-      if (!name || !phone) {
-        return alert("Name aur Phone number dono fields bharna zaroori hai!");
-      }
-      if (!isNoShift && (!startTime || !endTime)) {
-        return alert("Start Time aur End Time fields bharna zaroori hai, ya 'No Shift' check karein!");
-      }
-
-      let schedules = JSON.parse(localStorage.getItem('admin_schedules')) || [];
-      const index = schedules.findIndex(s => s.phone === phone);
-      if (index > -1) {
-        schedules[index] = { name, phone, startTime, endTime, breakStart, breakEnd, isNoShift };
-      } else {
-        schedules.push({ name, phone, startTime, endTime, breakStart, breakEnd, isNoShift });
-      }
-
-      localStorage.setItem('admin_schedules', JSON.stringify(schedules));
-      alert(`User & Shift Schedule saved for ${name}!`);
-      document.getElementById('admUserName').value = '';
-      document.getElementById('admUserPhone').value = '';
-      document.getElementById('admDutyStart').value = '';
-      document.getElementById('admDutyEnd').value = '';
-      document.getElementById('admBreakStart').value = '';
-      document.getElementById('admBreakEnd').value = '';
-      document.getElementById('admNoShiftCheck').checked = false;
-      toggleNoShiftFields();
-      renderAdminUserTable();
-    }
-
-    function adminAssignNumbersToUser() {
-      const targetPhone = document.getElementById('admTargetUserPhone').value.trim();
-      const rawNums = document.getElementById('admAssignedNumbers').value.trim();
-
-      if (!targetPhone) return alert("Kripya target user ka phone number enter karein!");
-      if (!rawNums) return alert("Kripya assign karne ke liye numbers paste karein!");
-
-      const matches = rawNums.match(/(?:\+?91[\s-]?)?[6-9]\d{4}[\s-]?\d{5}|\b[6-9]\d{9}\b/g);
-      if (!matches) return alert("Koi valid 10-digit mobile number nahi mila!");
-
-      let parsedNums = [];
-      matches.forEach(m => {
-        let clean = m.replace(/[^0-9]/g, '');
-        if (clean.length > 10) clean = clean.slice(-10);
-        if (clean.length === 10) parsedNums.push(clean);
-      });
-
-      let uniqueAssigned = [...new Set(parsedNums)];
-      let assignedMap = JSON.parse(localStorage.getItem('admin_assigned_numbers')) || {};
-      assignedMap[targetPhone] = uniqueAssigned;
-      localStorage.setItem('admin_assigned_numbers', JSON.stringify(assignedMap));
-
-      alert(`Successfully assigned ${uniqueAssigned.length} numbers to user (${targetPhone})!`);
-      document.getElementById('admTargetUserPhone').value = '';
-      document.getElementById('admAssignedNumbers').value = '';
-    }
-
-    function loadAdminAssignedNumbersToUser(userPhone) {
-      let assignedMap = JSON.parse(localStorage.getItem('admin_assigned_numbers')) || {};
-      if (assignedMap[userPhone] && Array.isArray(assignedMap[userPhone])) {
-        let adminGiven = assignedMap[userPhone];
-        adminGiven.forEach(num => {
-          if (!numbers.includes(num)) numbers.push(num);
-        });
-        saveState();
-      }
-    }
-
-    function renderAdminUserTable() {
-      let schedules = JSON.parse(localStorage.getItem('admin_schedules')) || [];
-      const tableDiv = document.getElementById('adminUserListTable');
-      if (schedules.length === 0) {
-        tableDiv.innerHTML = "<p style='font-size:11px; color:#888;'>Koi user schedule set nahi hai.</p>";
-        return;
-      }
-      let html = `<table><tr><th>Name</th><th>Phone</th><th>Shift / Details</th></tr>`;
-      schedules.forEach(s => {
-        let shiftTxt = s.isNoShift ? "<span style='color:#38bdf8;'>No Shift (Direct)</span>" : `${s.startTime}-${s.endTime}`;
-        html += `<tr><td>${s.name}</td><td>${s.phone}</td><td>${shiftTxt}</td></tr>`;
-      });
-      html += `</table>`;
-      tableDiv.innerHTML = html;
-    }
-
-    function closeAdminAndGoLogin() {
-      document.getElementById('adminCodeInput').value = '';
-      showUserLoginView();
-    }
-
-    // Process Duty Login
-    function processUserLogin() {
-      const name = document.getElementById('loginName').value.trim();
-      const phone = document.getElementById('loginPhone').value.trim();
-
-      if (!name || !phone) {
-        return alert("Kripya apna Name aur Phone number dono enter karein!");
-      }
-
-      let schedules = JSON.parse(localStorage.getItem('admin_schedules')) || [];
-      const record = schedules.find(s => s.phone === phone);
-
-      if (!record) {
-        return alert("Aapka number Admin dwaara registered nahi hai. Kripya Admin se sampark karein.");
-      }
-
-      if (record.isNoShift || record.startTime === "NO_SHIFT") {
-        localStorage.setItem('logged_user_phone', phone);
-        localStorage.setItem('logged_user_name', name);
-        loadAdminAssignedNumbersToUser(phone);
-
-        const splash = document.getElementById('splashScreen');
-        splash.style.opacity = '0';
-        setTimeout(() => { splash.style.display = 'none'; }, 500);
-        return;
-      }
-
-      const now = new Date();
-      const curHours = now.getHours();
-      const curMins = now.getMinutes();
-      const currentInMins = curHours * 60 + curMins;
-
-      const [sHours, sMins] = record.startTime.split(':').map(Number);
-      const startInMins = sHours * 60 + sMins;
-      const maxAllowedMins = startInMins + 10; 
-
-      if (record.breakStart && record.breakEnd) {
-        const [bSHours, bSMins] = record.breakStart.split(':').map(Number);
-        const [bEHours, bEMins] = record.breakEnd.split(':').map(Number);
-        const breakStartMins = bSHours * 60 + bSMins;
-        const breakEndMins = bEHours * 60 + bEMins;
-        if (currentInMins >= breakStartMins && currentInMins <= breakEndMins) {
-          return alert(`Abhi aapka Launch Break / Shift Break (${record.breakStart} - ${record.breakEnd}) ka samay hai. Is dauraan login nahi kar sakte!`);
-        }
-      }
-
-      if (currentInMins > maxAllowedMins) {
-        document.getElementById('onboardingBox').classList.add('hidden');
-        document.getElementById('dutyOffBox').classList.remove('hidden');
-        document.getElementById('dutyOffMsgText').innerText = `Aapka Duty Start Time ${record.startTime} tha. Aap 10 minute se zyada late hain! Aaj ke liye aapki duty OFF maani ja rahi hai.`;
-      } else {
-        localStorage.setItem('logged_user_phone', phone);
-        localStorage.setItem('logged_user_name', name);
-        loadAdminAssignedNumbersToUser(phone);
-
-        const splash = document.getElementById('splashScreen');
-        splash.style.opacity = '0';
-        setTimeout(() => { splash.style.display = 'none'; }, 500);
-      }
-    }
-
-    const SUPPORT_PHONE_NUMBER = "919876543210"; 
-    function openSupportWhatsApp() {
-      const supportMsg = encodeURIComponent("Hello Support Team, mujhe is app ke regarding help chahiye.");
-      window.open(`https://api.whatsapp.com/send?phone=${SUPPORT_PHONE_NUMBER}&text=${supportMsg}`, '_blank');
-    }
-
-    function switchTab(tabId, el, pushHistory = true) {
-      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-      
-      document.getElementById(tabId).classList.add('active');
-      if (el) el.classList.add('active');
-
-      if (pushHistory) history.pushState({ tab: tabId }, "", "");
-
-      if (tabId === 'tab-mycalls') renderCallHistory();
-      if (tabId === 'tab-clients') renderClientTable();
-    }
-
-    window.addEventListener('popstate', function(event) {
-      const cameraModal = document.getElementById('cameraModal');
-      const alarmModal = document.getElementById('alarmModal');
-
-      if (alarmModal.style.display === 'flex') {
-        dismissAlarm();
-        history.pushState({ modal: 'none' }, "", "");
-        return;
-      }
-      if (cameraModal.style.display === 'flex') {
-        closeAiCamera();
-        history.pushState({ modal: 'none' }, "", "");
-        return;
-      }
-
-      if (event.state && event.state.tab) {
-        switchTab(event.state.tab, document.getElementById('nav-' + event.state.tab.replace('tab-', '')), false);
-      } else {
-        switchTab('tab-home', document.getElementById('nav-home'), false);
-      }
-    });
-
-    function openAiCamera() { 
-      document.getElementById('cameraModal').style.display = 'flex'; 
-      history.pushState({ modal: 'camera' }, "", "");
-    }
-    
-    function closeAiCamera() {
-      document.getElementById('cameraModal').style.display = 'none';
-      document.getElementById('ocrLoader').style.display = 'none';
-      document.getElementById('capturedImg').style.display = 'none';
-      document.getElementById('placeholderText').style.display = 'block';
-    }
-
-    function triggerDirectCamera() { document.getElementById('cameraDirectInput').click(); }
-    function triggerGalleryUpload() { document.getElementById('galleryFileInput').click(); }
-    function triggerExcelUpload() { document.getElementById('excelFileInput').click(); }
-
-    function importExcelFile(input) {
-      const file = input.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const data = new Uint8Array(e.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
-          let extractedNumbers = [];
-          workbook.SheetNames.forEach(sheetName => {
-            const worksheet = workbook.Sheets[sheetName];
-            const sheetJson = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-            sheetJson.forEach(row => {
-              row.forEach(cell => {
-                if (cell !== null && cell !== undefined) {
-                  const strVal = String(cell);
-                  const matches = strVal.match(/(?:\+?91[\s-]?)?[6-9]\d{4}[\s-]?\d{5}|\b[6-9]\d{9}\b/g);
-                  if (matches) {
-                    matches.forEach(m => {
-                      let clean = m.replace(/[^0-9]/g, '');
-                      if (clean.length > 10) clean = clean.slice(-10);
-                      if (clean.length === 10) extractedNumbers.push(clean);
-                    });
-                  }
-                }
-              });
-            });
-          });
-          const uniqueExcelNums = [...new Set(extractedNumbers)];
-          if (uniqueExcelNums.length > 0) {
-            let addedCount = 0;
-            uniqueExcelNums.forEach(num => {
-              if (!numbers.includes(num)) { numbers.push(num); addedCount++; }
-            });
-            renderList();
-            showToast(`📊 ${addedCount} Excel Numbers Added!`);
-          } else {
-            alert('Excel file me koi valid 10-digit mobile number nahi mila!');
-          }
-        } catch (err) { alert('Excel file read karne me dikkat aayi.'); }
-      };
-      reader.readAsArrayBuffer(file);
-      input.value = '';
-    }
-
-    let ocrWorker = null;
-    async function getOcrWorker() {
-      if (!ocrWorker) {
-        ocrWorker = await Tesseract.createWorker('eng');
-        await ocrWorker.setParameters({ tessedit_char_whitelist: '0123456789+- ' });
-      }
-      return ocrWorker;
-    }
-
-    async function processMultipleImages(input) {
-      if (!input.files || input.files.length === 0) return;
-      const files = Array.from(input.files).slice(0, 20);
-      const imgEl = document.getElementById('capturedImg');
-      const loader = document.getElementById('ocrLoader');
-      const statusText = document.getElementById('ocrStatusText');
-      const placeholder = document.getElementById('placeholderText');
-
-      loader.style.display = 'flex';
-      placeholder.style.display = 'none';
-      let allScannedNumbers = [];
-
-      try {
-        const worker = await getOcrWorker();
-        for (let i = 0; i < files.length; i++) {
-          statusText.innerText = `Fast Scanning ${i + 1} of ${files.length}...`;
-          try {
-            const dataUrl = await readFileAsDataURL(files[i]);
-            imgEl.src = dataUrl;
-            imgEl.style.display = 'block';
-            const result = await worker.recognize(dataUrl);
-            const text = result.data.text;
-            const rawMatches = text ? text.match(/(?:\+?91[\s-]?)?[6-9]\d{4}[\s-]?\d{5}|\b[6-9]\d{9}\b/g) : null;
-            if (rawMatches) {
-              rawMatches.forEach(num => {
-                let clean = num.replace(/[^0-9]/g, '');
-                if (clean.length > 10) clean = clean.slice(-10);
-                if (clean.length === 10) allScannedNumbers.push(clean);
-              });
-            }
-          } catch (err) { console.error(err); }
-        }
-      } catch (e) { console.error(e); }
-
-      loader.style.display = 'none';
-      const uniqueNumbers = [...new Set(allScannedNumbers)];
-      if (uniqueNumbers.length > 0) {
-        const bulkTextarea = document.getElementById('bulkInput');
-        bulkTextarea.value += (bulkTextarea.value ? '\n' : '') + uniqueNumbers.join('\n');
-        showToast(`⚡ ${uniqueNumbers.length} Number(s) Scanned! 📸`);
-        addBulkNumbers();
-        closeAiCamera();
-      } else {
-        alert('Screenshots me koi valid number nahi mila.');
-        closeAiCamera();
-      }
-      input.value = '';
-    }
-
-    function readFileAsDataURL(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = e => resolve(e.target.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
-    function copyAngelLink() { copyToClipboard("https://angel-one.onelink.me/Wjgr/uqx28rex", "Angel One Link Copied! 📋"); }
-    function copyNaviLink() { copyToClipboard("https://r.navi.com/gnnxyC", "Navi Link Copied! 📱"); }
-
-    function copyToClipboard(text, message) {
-      navigator.clipboard.writeText(text).then(() => { showToast(message); }).catch(() => {
-        const textArea = document.createElement("textarea");
-        textArea.value = text;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textArea);
-        showToast(message);
-      });
-    }
 
     function showToast(msg) {
       const toast = document.getElementById('toast');
       document.getElementById('toastText').innerText = msg;
       toast.style.display = 'block';
-      setTimeout(() => { toast.style.display = 'none'; }, 2000);
+      setTimeout(() => { toast.style.display = 'none'; }, 2500);
     }
 
-    let numbers = JSON.parse(localStorage.getItem('user_numbers_list')) || [];
-    let calledNumbers = JSON.parse(localStorage.getItem('called_numbers_list')) || [];
-    let leadStatuses = JSON.parse(localStorage.getItem('lead_statuses_list')) || {};
-    let callHistory = JSON.parse(localStorage.getItem('call_history_logs')) || [];
-    let savedMsg = localStorage.getItem('user_wa_msg') || '';
-    let waQueue = [], waQueueIndex = 0;
+    function showAdminAuthView() {
+      document.getElementById('onboardingBox').classList.add('hidden');
+      document.getElementById('adminAuthBox').classList.remove('hidden');
+    }
 
-    let callTimerInterval = null;
-    let callSecondsCount = 0;
-    let currentCallingIndex = null;
+    function showUserLoginView() {
+      document.getElementById('adminAuthBox').classList.add('hidden');
+      document.getElementById('adminControlBox').classList.add('hidden');
+      document.getElementById('onboardingBox').classList.remove('hidden');
+    }
 
-    let audioCtxInstance = null;
-    let ringInterval = null;
-
-    function unlockAudioContext() {
-      if (!audioCtxInstance) {
-        audioCtxInstance = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtxInstance.state === 'suspended') {
-        audioCtxInstance.resume();
+    function verifyAdminCode() {
+      const code = document.getElementById('adminCodeInput').value.trim();
+      if (code === "1234") { // Apna Secret Admin Code yahan rakhein
+        document.getElementById('adminAuthBox').classList.add('hidden');
+        document.getElementById('adminControlBox').classList.remove('hidden');
+      } else {
+        alert("Galat Code! Wapas koshish karein.");
       }
     }
 
-    function playLoudRingingBell() {
-      try {
-        if (!audioCtxInstance) {
-          audioCtxInstance = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioCtxInstance.state === 'suspended') {
-          audioCtxInstance.resume();
-        }
+    function closeAdminAndGoLogin() {
+      showUserLoginView();
+    }
 
-        playLoudBeep(audioCtxInstance, 900, 0, 0.2, 1.0);
-        playLoudBeep(audioCtxInstance, 1300, 0.25, 0.2, 1.0);
-        playLoudBeep(audioCtxInstance, 900, 0.5, 0.2, 1.0);
-        playLoudBeep(audioCtxInstance, 1300, 0.75, 0.2, 1.0);
-      } catch (e) {
-        console.error(e);
+    // 1. ADMIN FUNCTION - Leads Push karna Firebase me
+    function adminAssignNumbersToUser() {
+      const targetPhone = document.getElementById('admTargetUserPhone').value.trim();
+      const numbersText = document.getElementById('admAssignedNumbers').value.trim();
+
+      if (!targetPhone || !numbersText) {
+        alert("Kripya Target Phone aur Numbers dono bharein!");
+        return;
       }
+
+      const numbersArray = numbersText.split('\n').filter(num => num.trim() !== '');
+
+      window.dbSet(window.dbRef(window.db, 'assigned_leads/' + targetPhone), {
+        numbers: numbersArray,
+        updatedAt: Date.now()
+      }).then(() => {
+        showToast("Leads Realtime Sync Ho Gayi!");
+        document.getElementById('admAssignedNumbers').value = '';
+      }).catch((error) => {
+        alert("Error: " + error.message);
+      });
     }
 
-    function playLoudBeep(ctx, freq, delay, duration, volume) {
-      setTimeout(() => {
-        try {
-          let osc = ctx.createOscillator();
-          let gain = ctx.createGain();
-          osc.type = 'square';
-          osc.frequency.value = freq;
-          
-          gain.gain.setValueAtTime(volume, ctx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
-          
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start();
-          osc.stop(ctx.currentTime + duration);
-        } catch (err) {}
-      }, delay * 1000);
-    }
+    // 2. USER LOGIN & REALTIME SYNC LISTENER
+    function processUserLogin() {
+      const name = document.getElementById('loginName').value.trim();
+      const phone = document.getElementById('loginPhone').value.trim();
 
-    function startRingingAlarm(number, timeText) {
-      const modal = document.getElementById('alarmModal');
-      if (modal.style.display === 'flex') return;
-
-      document.getElementById('alarmCustomerInfo').innerText = `Customer (${number}) ko call ka time ho gaya hai!\nDetails: ${timeText}`;
-      document.getElementById('alarmNumText').innerText = number;
-      const cleanNum = number.replace(/[^0-9]/g, '');
-      document.getElementById('alarmCallBtn').href = 'tel:+91' + cleanNum;
-      
-      modal.style.display = 'flex';
-      history.pushState({ modal: 'alarm' }, "", "");
-
-      playLoudRingingBell();
-      if (ringInterval) clearInterval(ringInterval);
-      ringInterval = setInterval(() => {
-        playLoudRingingBell();
-      }, 1200);
-    }
-
-    function dismissAlarm() {
-      document.getElementById('alarmModal').style.display = 'none';
-      if (ringInterval) {
-        clearInterval(ringInterval);
-        ringInterval = null;
+      if (!name || !phone) {
+        alert("Kripya Name aur Registered Mobile Number dalein!");
+        return;
       }
+
+      document.getElementById('splashScreen').style.display = 'none';
+      showToast("Logged in successfully!");
+
+      // Live Listen for Updates
+      listenForUserLeads(phone);
     }
 
-    setInterval(() => {
-      const now = new Date();
-      let hours = now.getHours();
-      let minutes = now.getMinutes();
-      let hours12 = hours % 12;
-      hours12 = hours12 ? hours12 : 12; 
-      let minStr = minutes < 10 ? '0' + minutes : minutes;
+    function listenForUserLeads(userPhone) {
+      if (!userPhone) return;
+      const userLeadsRef = window.dbRef(window.db, 'assigned_leads/' + userPhone);
 
-      let currentTime12 = hours12 + ":" + minStr;
-      let currentTime24 = (hours < 10 ? '0' + hours : hours) + ":" + minStr;
-      let dotFormat = hours12 + "." + minStr;
-
-      Object.keys(leadStatuses).forEach(num => {
-        let item = leadStatuses[num];
-        if (item && item.status === 'time' && item.timeVal) {
-          let tVal = item.timeVal.toLowerCase().trim();
-          
-          if (tVal.includes(currentTime12) || 
-              tVal.includes(currentTime24) || 
-              tVal.includes(dotFormat) ||
-              tVal.startsWith(hours12 + ":" + minStr) ||
-              tVal.startsWith(hours12 + "." + minStr)) {
-            startRingingAlarm(num, item.timeVal);
-          }
+      window.dbOnValue(userLeadsRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data && data.numbers) {
+          document.getElementById('bulkInput').value = data.numbers.join('\n');
+          showToast("Realtime Update Aagaya!");
         }
       });
-    }, 5000);
+    }
 
-    document.getElementById('defaultMsg').value = savedMsg;
-    document.getElementById('defaultMsg').addEventListener('input', function() {
-      localStorage.setItem('user_wa_msg', this.value);
-      renderList();
+    // PWA Install Prompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('installAppBtn').style.display = 'flex';
     });
 
-    function saveState() {
-      localStorage.setItem('user_numbers_list', JSON.stringify(numbers));
-      localStorage.setItem('called_numbers_list', JSON.stringify(calledNumbers));
-      localStorage.setItem('lead_statuses_list', JSON.stringify(leadStatuses));
-      localStorage.setItem('call_history_logs', JSON.stringify(callHistory));
-      updateStatsAndCategorizedLists();
-      renderClientTable();
-    }
-
-    function formatDuration(seconds) {
-      if (!seconds || seconds <= 0) return '00s';
-      let mins = Math.floor(seconds / 60);
-      let secs = seconds % 60;
-      return mins > 0 ? `${mins}m ${secs < 10 ? '0' : ''}${secs}s` : `${secs}s`;
-    }
-
-    function stopCallTimer() {
-      if (callTimerInterval) { clearInterval(callTimerInterval); callTimerInterval = null; }
-      if (currentCallingIndex !== null && callHistory[currentCallingIndex]) {
-        callHistory[currentCallingIndex].duration = formatDuration(callSecondsCount);
-        callHistory[currentCallingIndex].durationSec = callSecondsCount;
-        saveState();
+    async function installAppPrompt() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        deferredPrompt = null;
       }
-      currentCallingIndex = null;
-      callSecondsCount = 0;
-      document.getElementById('liveCallTimer').innerText = '00:00';
-    }
-
-    function startCallTimer(num) {
-      stopCallTimer();
-      callSecondsCount = 0;
-      document.getElementById('liveCallTimer').innerText = '00:00';
-      const now = new Date();
-      callHistory.unshift({
-        number: num,
-        time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
-        date: now.toLocaleDateString(),
-        duration: 'Running...',
-        durationSec: 0
-      });
-      currentCallingIndex = 0;
-      callTimerInterval = setInterval(() => {
-        callSecondsCount++;
-        let m = Math.floor(callSecondsCount / 60);
-        let s = callSecondsCount % 60;
-        document.getElementById('liveCallTimer').innerText = (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
-      }, 1000);
-    }
-
-    function renderList() {
-      const container = document.getElementById('numberList');
-      container.innerHTML = '';
-      const encodedMsg = encodeURIComponent(document.getElementById('defaultMsg').value);
-
-      numbers.forEach((num, index) => {
-        if (leadStatuses[num] && leadStatuses[num].status) return;
-        const isCalled = calledNumbers.includes(num);
-        const cleanNum = num.replace(/[^0-9]/g, '');
-
-        const cardBox = document.createElement('div');
-        cardBox.className = 'num-card-box';
-
-        const actionRow = document.createElement('div');
-        actionRow.className = 'action-row';
-
-        const callBtn = document.createElement('a');
-        callBtn.className = 'num-card' + (isCalled ? ' called' : '');
-        callBtn.innerText = '📞 ' + num;
-        callBtn.href = 'tel:+91' + cleanNum;
-        callBtn.onclick = function() {
-          if (!calledNumbers.includes(num)) calledNumbers.push(num);
-          startCallTimer(num);
-          document.getElementById('topSliderBar').classList.add('live-calling');
-          document.getElementById('sliderIcon').innerHTML = '<i class="fas fa-volume-up" style="color: #22c55e;"></i>';
-          document.getElementById('activeCallNum').innerText = num;
-          saveState();
-          renderList();
-        };
-
-        const waBtn = document.createElement('a');
-        waBtn.className = 'wa-btn';
-        waBtn.innerText = '💬 WA';
-        waBtn.href = 'https://api.whatsapp.com/send?phone=91' + cleanNum + '&text=' + encodedMsg;
-        waBtn.target = '_blank';
-
-        const delBtn = document.createElement('button');
-        delBtn.className = 'delete-single-btn';
-        delBtn.innerText = '🗑';
-        delBtn.onclick = function() { removeSingleNumber(index); };
-
-        actionRow.appendChild(callBtn);
-        actionRow.appendChild(waBtn);
-        actionRow.appendChild(delBtn);
-
-        const statusRow = document.createElement('div');
-        statusRow.className = 'status-buttons-row';
-
-        const intBtn = document.createElement('button');
-        intBtn.className = 'sub-btn interested';
-        intBtn.innerText = '👍 Interested';
-        intBtn.disabled = !isCalled;
-        intBtn.onclick = function() { setStatus(num, 'interested'); };
-
-        const notIntBtn = document.createElement('button');
-        notIntBtn.className = 'sub-btn not-interested';
-        notIntBtn.innerText = '👎 Not Interested';
-        notIntBtn.disabled = !isCalled;
-        notIntBtn.onclick = function() { setStatus(num, 'not_interested'); };
-
-        const timeBtn = document.createElement('button');
-        timeBtn.className = 'sub-btn time';
-        timeBtn.innerText = '⏰ Time';
-        timeBtn.disabled = !isCalled;
-        timeBtn.onclick = function() {
-          let timeVal = prompt('Time ya Notes daalein (Jaise: 12.28 p call kar na h):');
-          if (timeVal !== null) setStatus(num, 'time', timeVal);
-        };
-
-        statusRow.appendChild(intBtn);
-        statusRow.appendChild(notIntBtn);
-        statusRow.appendChild(timeBtn);
-
-        cardBox.appendChild(actionRow);
-        cardBox.appendChild(statusRow);
-        container.appendChild(cardBox);
-      });
-      saveState();
-    }
-
-    function getFilteredClients() {
-      const filterCategory = document.getElementById('clientFilterCategory').value;
-      const searchQuery = document.getElementById('clientSearchInput').value.toLowerCase().trim();
-      let results = [];
-
-      numbers.forEach(num => {
-        const item = leadStatuses[num];
-        if (item && item.status) {
-          let cat = item.status;
-          let details = cat === 'time' ? (item.timeVal || 'Timing set') : (cat === 'interested' ? 'Interested' : 'Not Interested');
-          
-          if (filterCategory !== 'all' && filterCategory !== cat) return;
-          if (searchQuery && !num.toLowerCase().includes(searchQuery) && !details.toLowerCase().includes(searchQuery)) return;
-
-          results.push({ number: num, category: cat, details: details });
-        }
-      });
-      return results;
-    }
-
-    function renderClientTable() {
-      const tbody = document.getElementById('clientTableBody');
-      const filtered = getFilteredClients();
-
-      if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #64748b; padding: 20px;">No matching records found.</td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = '';
-      filtered.forEach((client, idx) => {
-        let badgeHtml = '';
-        if (client.category === 'interested') badgeHtml = '<span class="badge-int">👍 Interested</span>';
-        else if (client.category === 'not_interested') badgeHtml = '<span class="badge-not">👎 Not Interested</span>';
-        else if (client.category === 'time') badgeHtml = '<span class="badge-time">⏰ Timing</span>';
-
-        const cleanNum = client.number.replace(/[^0-9]/g, '');
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${idx + 1}</td>
-          <td>
-            <a href="tel:+91${cleanNum}" class="client-call-link" onclick="handleClientCallClick('${client.number}')">
-              <i class="fas fa-phone-alt client-shake-phone"></i> ${client.number}
-            </a>
-          </td>
-          <td>${badgeHtml}</td>
-          <td>${client.details}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function handleClientCallClick(num) {
-      if (!calledNumbers.includes(num)) calledNumbers.push(num);
-      startCallTimer(num);
-      document.getElementById('topSliderBar').classList.add('live-calling');
-      document.getElementById('sliderIcon').innerHTML = '<i class="fas fa-volume-up" style="color: #22c55e;"></i>';
-      document.getElementById('activeCallNum').innerText = num;
-      saveState();
-    }
-
-    function copyFilteredClients() {
-      const filtered = getFilteredClients();
-      if (filtered.length === 0) return alert('Copy karne ke liye koi data available nahi hai!');
-      let textToCopy = "Phone Number\tCategory\tTiming / Details\n";
-      filtered.forEach(c => {
-        let catText = c.category === 'interested' ? 'Interested' : (c.category === 'not_interested' ? 'Not Interested' : 'Timing');
-        textToCopy += `${c.number}\t${catText}\t${c.details}\n`;
-      });
-      copyToClipboard(textToCopy, "Filtered Client Data Copied! 📋");
-    }
-
-    function downloadClientExcel() {
-      const filtered = getFilteredClients();
-      if (filtered.length === 0) return alert('Download karne ke liye koi data available nahi hai!');
-      
-      let wsData = [["Phone Number", "Category", "Timing / Details"]];
-      filtered.forEach(c => {
-        let catText = c.category === 'interested' ? 'Interested' : (c.category === 'not_interested' ? 'Not Interested' : 'Timing');
-        wsData.push([c.number, catText, c.details]);
-      });
-
-      const wb = XLSX.utils.book_new();
-      const worksheet = XLSX.utils.aoa_to_sheet(wsData);
-      XLSX.utils.book_append_sheet(wb, worksheet, "Client Leads");
-      XLSX.writeFile(wb, "Client_Leads_Report.xlsx");
-      showToast("Excel File Downloaded! 📊");
-    }
-
-    function renderCallHistory() {
-      const historyContainer = document.getElementById('callHistoryList');
-      document.getElementById('historyCount').innerText = callHistory.length;
-      if (callHistory.length === 0) {
-        historyContainer.innerHTML = '<div style="text-align: center; color: #94a3b8; padding: 20px; font-size: 12px;">Koi call record nahi hai.</div>';
-        return;
-      }
-      historyContainer.innerHTML = '';
-      callHistory.forEach((item) => {
-        const div = document.createElement('div');
-        div.className = 'call-history-item';
-        div.innerHTML = `<div><div class="history-num">📞 ${item.number}</div><div class="history-time">🗓️ ${item.date} | ⏰ ${item.time}</div></div><div class="history-duration">⏱️ ${item.duration || '00s'}</div>`;
-        historyContainer.appendChild(div);
-      });
-    }
-
-    function copyCallHistoryExcel() {
-      if (callHistory.length === 0) return alert('Copy karne ke liye koi call history nahi hai!');
-      let excelData = "Phone Number\tDate\tTime\tDuration\n";
-      callHistory.forEach(item => { excelData += `${item.number}\t${item.date}\t${item.time}\t${item.duration || '00s'}\n`; });
-      copyToClipboard(excelData, "Call History Copied for Excel! 📋");
-    }
-
-    function clearCallHistory() {
-      if (confirm('Kya aap poori Call History delete karna chahte hain?')) {
-        callHistory = []; stopCallTimer(); saveState(); renderCallHistory();
-      }
-    }
-
-    function setStatus(num, status, timeVal = '') {
-      if (!calledNumbers.includes(num)) return alert('Pehle call karein!');
-      stopCallTimer();
-      leadStatuses[num] = { status: status, timeVal: timeVal };
-      document.getElementById('topSliderBar').classList.remove('live-calling');
-      document.getElementById('sliderIcon').innerHTML = '<i class="fas fa-desktop"></i>';
-      renderList();
-    }
-
-    function updateStatsAndCategorizedLists() {
-      let intList = [], notIntList = [], timeList = [];
-      numbers.forEach(num => {
-        const item = leadStatuses[num];
-        if (item && item.status) {
-          if (item.status === 'interested') intList.push(num);
-          else if (item.status === 'not_interested') notIntList.push(num);
-          else if (item.status === 'time') timeList.push(num + (item.timeVal ? ' (' + item.timeVal + ')' : ''));
-        }
-      });
-      document.getElementById('pendingCount').innerText = numbers.length - (intList.length + notIntList.length + timeList.length);
-      document.getElementById('totalCount').innerText = numbers.length;
-      document.getElementById('calledCount').innerText = calledNumbers.filter(n => numbers.includes(n)).length;
-      document.getElementById('countInt').innerText = intList.length;
-      document.getElementById('listInt').innerText = intList.join('\n') || 'Koi nahi';
-      document.getElementById('countNotInt').innerText = notIntList.length;
-      document.getElementById('listNotInt').innerText = notIntList.join('\n') || 'Koi nahi';
-      document.getElementById('countTime').innerText = timeList.length;
-      document.getElementById('listTime').innerText = timeList.join('\n') || 'Koi nahi';
-    }
-
-    function addBulkNumbers() {
-      const val = document.getElementById('bulkInput').value.trim();
-      if (!val) return alert('Pehle numbers paste karein!');
-      const matches = val.match(/(?:\+?91[\s-]?)?[6-9]\d{4}[\s-]?\d{5}|\b[6-9]\d{9}\b/g);
-      if (!matches) return alert('Koi valid 10-digit number nahi mila!');
-      let added = 0;
-      matches.forEach(m => {
-        let digits = m.replace(/[^0-9]/g, '');
-        if (digits.length > 10) digits = digits.slice(-10);
-        if (digits.length === 10 && !numbers.includes(digits)) { numbers.push(digits); added++; }
-      });
-      document.getElementById('bulkInput').value = '';
-      renderList();
-      alert(added + ' naye numbers add ho gaye!');
-    }
-
-    function removeSingleNumber(index) {
-      delete leadStatuses[numbers[index]];
-      numbers.splice(index, 1);
-      renderList();
-    }
-
-    function clearAllNumbers() {
-      if (confirm('Clear confirm?')) {
-        numbers = []; calledNumbers = []; leadStatuses = {}; waQueue = []; waQueueIndex = 0;
-        stopCallTimer();
-        document.getElementById('topSliderBar').classList.remove('live-calling');
-        document.getElementById('sliderIcon').innerHTML = '<i class="fas fa-desktop"></i>';
-        updateWaQueueUI();
-        renderList();
-      }
-    }
-
-    function resetCalledStatus() { calledNumbers = []; renderList(); }
-    function copyText(id) {
-      const txt = document.getElementById(id).innerText;
-      if (txt === 'Koi nahi') return alert('Copy karne ke liye koi data nahi hai!');
-      navigator.clipboard.writeText(txt);
-      alert('List copy ho gayi!');
-    }
-
-    function handleWaQueueClick() {
-      if (numbers.length === 0) return alert('Pehle numbers list me add karein!');
-      if (waQueue.length === 0 || waQueueIndex >= waQueue.length) {
-        let unhandled = numbers.filter(n => !(leadStatuses[n] && leadStatuses[n].status));
-        waQueue = unhandled.slice(0, 10);
-        waQueueIndex = 0;
-      }
-      if (waQueue.length === 0) return alert('Koi unhandled numbers nahi bache!');
-
-      const targetNum = waQueue[waQueueIndex];
-      const encodedMsg = encodeURIComponent(document.getElementById('defaultMsg').value);
-      const cleanNum = targetNum.replace(/[^0-9]/g, '');
-      window.open('https://api.whatsapp.com/send?phone=91' + cleanNum + '&text=' + encodedMsg, '_blank');
-      
-      waQueueIndex++;
-      updateWaQueueUI();
-    }
-
-    function updateWaQueueUI() {
-      document.getElementById('queueProgress').innerText = waQueueIndex + '/' + waQueue.length;
     }
   </script>
 </body>
