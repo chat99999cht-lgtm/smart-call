@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard - Leads Typing</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+body { background-color: #0f172a; color: #f8fafc; padding: 15px; height: 100vh; overflow: hidden; }
+.dashboard-container { max-width: 1500px; height: calc(100vh - 30px); margin: 0 auto; border: 1px solid #334155; border-radius: 12px; padding: 15px; background: #0b0f19; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 12px; }
+.header { background: #1e293b; border: 1px solid #334155; padding: 10px 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+.header h1 { font-size: 20px; color: #38bdf8; }
+.window-controls { display: flex; gap: 10px; align-items: center; }
+.win-btn { background: #334155; border: none; color: #f8fafc; padding: 5px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: 600; transition: background 0.2s; }
+.win-btn:hover { background: #0284c7; }
+
+.filter-bar { display: flex; gap: 8px; flex-wrap: wrap; flex-shrink: 0; }
+.filter-tab { background: #1e293b; border: 1px solid #334155; color: #94a3b8; padding: 6px 14px; border-radius: 20px; font-size: 13px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+.filter-tab.active, .filter-tab:hover { background: #0284c7; color: #ffffff; border-color: #38bdf8; }
+
+.kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; flex-shrink: 0; }
+.kpi-card { background: #1e293b; border: 1px solid #334155; padding: 12px 15px; border-radius: 8px; }
+.kpi-card p { font-size: 12px; color: #94a3b8; margin-bottom: 3px; }
+.kpi-card h2 { font-size: 20px; color: #f8fafc; }
+
+/* Modified to 3 Columns for Round Graph */
+.graphs-section { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 15px; flex-shrink: 0; }
+.graph-card { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px 15px; }
+.graph-card h3 { font-size: 13px; color: #f8fafc; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.chart-box { position: relative; height: 160px; width: 100%; }
+
+.content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; flex-grow: 1; overflow: hidden; }
+.panel { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; height: 100%; }
+.panel h3 { font-size: 14px; color: #38bdf8; margin-bottom: 10px; }
+.typing-area { width: 100%; flex-grow: 1; background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 12px; color: #f8fafc; font-size: 14px; resize: none; outline: none; margin-bottom: 10px; font-family: 'Courier New', monospace; line-height: 1.6; }
+.save-btn { background: #22c55e; color: #0f172a; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; float: right; font-size: 13px; }
+.save-btn:hover { background: #16a34a; color: #fff; }
+.clear-btn { background: #64748b; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; float: left; font-size: 13px; }
+
+.right-column-container { display: flex; flex-direction: column; height: 100%; background: #1e293b; border: 1px solid #334155; border-radius: 8px; overflow: hidden; }
+.cards-header-info { padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; background: #1e293b; flex-shrink: 0; }
+.cards-header-info h3 { font-size: 14px; color: #38bdf8; }
+.search-card-input { background: #0f172a; border: 1px solid #334155; color: #fff; padding: 5px 10px; border-radius: 4px; font-size: 12px; outline: none; width: 140px; }
+.right-cards-scrollable { flex-grow: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+
+.user-card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; overflow: hidden; flex-shrink: 0; transition: all 0.2s; }
+.user-card.active-card { border: 2px solid #22c55e; box-shadow: 0 0 15px rgba(34,197,94,0.4); }
+.user-card-header { background: #0f172a; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #334155; }
+.user-info-left { display: flex; align-items: center; gap: 12px; }
+.avatar-circle { width: 35px; height: 35px; background: #2563eb; color: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 15px; }
+.user-name { font-weight: bold; font-size: 14px; color: #f8fafc; }
+.user-phone { font-size: 12px; color: #94a3b8; }
+.action-icons { display: flex; gap: 10px; }
+.icon-btn { text-decoration: none; font-size: 15px; cursor: pointer; }
+.user-card-body { padding: 12px 14px; }
+.acc-title-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px dashed #334155; }
+.acc-brand { display: flex; align-items: center; gap: 10px; }
+.acc-logo { width: 36px; height: 36px; background: #0284c7; color: #ffffff; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; text-align: center; padding: 2px; }
+.acc-name { font-size: 13px; font-weight: bold; color: #f8fafc; }
+.acc-sub { font-size: 11px; color: #94a3b8; }
+.submit-date { font-size: 11px; color: #94a3b8; text-align: right; }
+.submit-date span { display: block; color: #cbd5e1; font-weight: bold; }
+.goals-section { margin-top: 8px; }
+.goal-item { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #cbd5e1; margin-bottom: 5px; }
+.status-tag { color: #38bdf8; font-size: 11px; font-weight: 500; }
+.select-card-btn { background: #334155; color: #38bdf8; border: none; padding: 6px 12px; border-radius: 4px; font-size: 11px; cursor: pointer; margin-top: 8px; font-weight: 600; }
+.select-card-btn:hover { background: #0284c7; color: #fff; }
+.select-card-btn.active-btn { background: #22c55e; color: #0f172a; }
+
+.typing-info-banner { background: #1e3a8a; border: 1px solid #3b82f6; color: #dbeafe; padding: 8px 12px; border-radius: 6px; font-size: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.typing-info-banner strong { color: #93c5fd; }
+
+.wrong-alert {
+    position: fixed; top: 20px; right: 20px; background: #dc2626; color: #fff;
+    padding: 15px 25px; border-radius: 8px; font-weight: bold; font-size: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 9999;
+    animation: slideIn 0.3s ease-out;
+}
+@keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+.right-cards-scrollable { scroll-behavior:smooth; }
+.typing-progress-wrap { margin-top:5px; height:3px; width:110px; background:#334155; border-radius:5px; overflow:hidden; }
+.typing-progress-bar { height:100%; width:0%; background:linear-gradient(90deg,#38bdf8,#22c55e); transition:width .25s linear; }
+.stats-check-btn { background:#0284c7; color:#fff; border:1px solid #38bdf8; padding:6px 12px; border-radius:4px; font-size:11px; cursor:pointer; font-weight:600; }
+.stats-check-btn:hover { background:#0369a1; }
+.typing-stats-modal { position:fixed; inset:0; background:rgba(2,6,23,.72); display:none; align-items:center; justify-content:center; z-index:10000; }
+.typing-stats-box { width:min(520px,92vw); background:#1e293b; border:1px solid #334155; border-radius:12px; padding:20px; box-shadow:0 15px 40px rgba(0,0,0,.55); }
+.typing-stats-box h3 { color:#38bdf8; margin-bottom:15px; }
+.stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.stat-mini { background:#0f172a; border:1px solid #334155; border-radius:8px; padding:14px 10px; text-align:center; }
+.stat-mini strong { display:block; font-size:24px; margin-bottom:4px; }
+.stat-mini span { color:#94a3b8; font-size:11px; }
+.stats-close { margin-top:15px; width:100%; background:#334155; color:#fff; border:0; padding:8px; border-radius:6px; cursor:pointer; }
+
+.result-history-card { background:#0f172a; border:1px solid #334155; border-radius:8px; padding:9px 10px; margin:0 12px 8px; font-size:11px; color:#cbd5e1; }
+.result-history-card strong { color:#f8fafc; }
+.result-history-title { padding:9px 15px 4px; font-size:12px; color:#38bdf8; font-weight:700; }
+</style>
+</head>
+<body>
+
+<div class="dashboard-container">
+    <div class="header">
+        <h1>📊 Admin Master Dashboard</h1>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div id="liveClock" style="font-family: monospace; color: #38bdf8; font-size: 14px;">00:00:00 AM</div>
+            <div class="window-controls">
+                <button class="win-btn" onclick="toggleFullScreen()">Full / Exit Screen</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="filter-bar" id="brandFilterBar">
+        <button class="filter-tab active" onclick="setBrandFilter('all', this)">All Leads</button>
+        <button class="filter-tab" onclick="setBrandFilter('choice', this)">Choice</button>
+        <button class="filter-tab" onclick="setBrandFilter('equity', this)">Equity</button>
+        <button class="filter-tab" onclick="setBrandFilter('hdfc sky', this)">HDFC Sky</button>
+        <button class="filter-tab" onclick="setBrandFilter('kotak security', this)">Kotak Security</button>
+        <button class="filter-tab" onclick="setBrandFilter('motilal oswal', this)">Motilal Oswal</button>
+        <button class="filter-tab" onclick="setBrandFilter('stockgro', this)">StockGro</button>
+        <button class="filter-tab" onclick="setBrandFilter('upstox', this)">Upstox</button>
+    </div>
+
+    <div class="kpi-grid">
+        <div class="kpi-card"><p>Total Loaded Leads</p><h2 id="totalCountDisplay">0</h2></div>
+        <div class="kpi-card"><p>Active Leads</p><h2 style="color: #22c55e;" id="activeCountDisplay">0</h2></div>
+        <div class="kpi-card"><p>Completed & Saved</p><h2 style="color: #38bdf8;" id="savedCountDisplay">0</h2></div>
+    </div>
+
+    <!-- GRAPHS SECTION WITH ROUND GRAPH ADDED IN THE MIDDLE -->
+    <div class="graphs-section">
+        <div class="graph-card">
+            <h3>Product Distribution</h3>
+            <div class="chart-box"><canvas id="brandBarChart"></canvas></div>
+        </div>
+
+        <!-- NEW ROUND GRAPH (DOUGHNUT CHART) -->
+        <div class="graph-card">
+            <h3>⚪ Cards Status Breakdown</h3>
+            <div class="chart-box"><canvas id="roundDoughnutChart"></canvas></div>
+        </div>
+
+        <div class="graph-card">
+            <h3>Hourly Live Interview Flow</h3>
+            <div class="chart-box"><canvas id="hourlyLineChart"></canvas></div>
+        </div>
+    </div>
+
+    <div class="content-grid">
+        <div>
+            <div class="panel">
+                <h3>⌨️ Touchpad (Typing Area)</h3>
+                <div class="typing-info-banner">
+                    <span>📝 <strong>Active Card:</strong> <span id="liveCardInfo">Koi card select nahi hai</span></span>
+                    <span style="display:flex;align-items:center;gap:6px;">⏱️ Timer: <strong id="typingTimer">00:00</strong><span class="typing-progress-wrap"><span id="typingProgressBar" class="typing-progress-bar"></span></span></span>
+                </div>
+                <textarea class="typing-area" id="touchpadText" placeholder="Right side se kisi card par 'Start Typing' click karein..." readonly></textarea>
+                <div>
+                    <button class="clear-btn" onclick="clearTouchpad()">🗑️ Clear</button>
+                    <button class="save-btn" onclick="saveAndRemoveCard()">💾 Save & Download Excel</button>
+                    <div style="clear: both;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-column-container">
+            <div class="cards-header-info">
+                <h3>Leads Cards (<span id="cardsCount">0</span>)</h3>
+                <div style="display:flex;gap:6px;align-items:center;">
+                    <button class="stats-check-btn" onclick="showTypingStats()">📊 Results</button>
+                    <input type="text" id="cardSearch" class="search-card-input" placeholder="Search..." onkeyup="renderLeadsCards()">
+                </div>
+            </div>
+            <div class="right-cards-scrollable" id="leadsCardsContainer"></div>
+
+            <div id="resultPanel" style="display:none;max-height:180px;overflow-y:auto;border-top:1px solid #334155;">
+                <div class="result-history-title">📊 Completed / Missed Results</div>
+                <div id="resultHistory"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let fullDatasetFromExcel = [
+  {"id":1,"name":"ANISH KUMAR","phone":"9576076608","product":"HDFC SKY","brand_filter":"hdfc sky","category":"Demat Account","date":"Sep 09, 2026","g1_status":"In process","g2_status":"Not eligible","remarks":""},
+  {"id":2,"name":"Satyam Kumar","phone":"9220301788","product":"HDFC SKY","brand_filter":"hdfc sky","category":"Demat Account","date":"Sep 02, 2026","g1_status":"In process","g2_status":"Not eligible","remarks":""},
+  {"id":3,"name":"Vicky","phone":"7065985012","product":"HDFC SKY","brand_filter":"hdfc sky","category":"Demat Account","date":"Sep 05, 2026","g1_status":"Approved","g2_status":"Not eligible","remarks":"Approved"},
+  {"id":4,"name":"Anshu","phone":"7983637176","product":"HDFC SKY","brand_filter":"hdfc sky","category":"Demat Account","date":"Sep 05, 2026","g1_status":"Approved","g2_status":"Not eligible","remarks":"Approved"},
+  {"id":5,"name":"Priyanshu","phone":"8882084724","product":"Upstox App","brand_filter":"upstox","category":"Demat Account","date":"Sep 05, 2026","g1_status":"Approved","g2_status":"Not eligible","remarks":"Approved"},
+  {"id":6,"name":"Ritik","phone":"9958746321","product":"Upstox","brand_filter":"upstox","category":"Demat Account","date":"Sep 05, 2026","g1_status":"Approved","g2_status":"Approved","remarks":"Done"},
+  {"id":7,"name":"Aman Singh","phone":"9876543210","product":"StockGro","brand_filter":"stockgro","category":"Demat Account","date":"Sep 06, 2026","g1_status":"Done","g2_status":"Approved","remarks":"Verified"},
+  {"id":8,"name":"Rohit Sharma","phone":"9123456789","product":"Kotak Security","brand_filter":"kotak security","category":"Demat Account","date":"Sep 06, 2026","g1_status":"Pending","g2_status":"","remarks":"Call back"},
+  {"id":9,"name":"Neha Verma","phone":"9988776655","product":"Choice","brand_filter":"choice","category":"Demat Account","date":"Sep 07, 2026","g1_status":"Approved","g2_status":"Done","remarks":""},
+  {"id":10,"name":"Karan Mehta","phone":"9871112233","product":"Motilal Oswal","brand_filter":"motilal oswal","category":"Demat Account","date":"Sep 07, 2026","g1_status":"Approved","g2_status":"Done","remarks":"OK"},
+  {"id":11,"name":"Pooja Sharma","phone":"9812345678","product":"Equity","brand_filter":"equity","category":"Demat Account","date":"Sep 08, 2026","g1_status":"In process","g2_status":"","remarks":""},
+  {"id":12,"name":"Ravi Kumar","phone":"9765432109","product":"Choice","brand_filter":"choice","category":"Demat Account","date":"Sep 08, 2026","g1_status":"Approved","g2_status":"Approved","remarks":"Done"}
+];
+
+let leadsData = JSON.parse(JSON.stringify(fullDatasetFromExcel));
+let currentBrandFilter = 'all';
+let selectedCardId = null;
+let savedLeadsLog = [];
+
+let typingTimerInterval = null;
+let typingSeconds = 0;
+const TYPING_LIMIT_SECONDS = 60;
+let typingCycleActive = false;
+let cardOutcomeLog = [];
+let completedResultCards = [];
+let roundChartInstance = null;
+
+function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => alert(`Error: ${err.message}`));
+    } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+    }
+}
+
+function setBrandFilter(brand, element) {
+    currentBrandFilter = brand;
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    element.classList.add('active');
+    renderLeadsCards();
+}
+
+function renderLeadsCards() {
+    const container = document.getElementById('leadsCardsContainer');
+    if (!container) return;
+
+    const query = document.getElementById('cardSearch').value.toLowerCase().trim();
+
+    const filtered = leadsData.filter(item => {
+        const matchesBrand = (currentBrandFilter === 'all' || item.brand_filter === currentBrandFilter);
+        const matchesSearch =
+            item.name.toLowerCase().includes(query) ||
+            item.phone.toLowerCase().includes(query) ||
+            item.product.toLowerCase().includes(query);
+        return matchesBrand && matchesSearch;
+    });
+
+    document.getElementById('cardsCount').textContent = filtered.length;
+    document.getElementById('totalCountDisplay').textContent = leadsData.length;
+    document.getElementById('activeCountDisplay').textContent = leadsData.length;
+    document.getElementById('savedCountDisplay').textContent = savedLeadsLog.length;
+
+    let html = '';
+    filtered.forEach((lead) => {
+        const initial = lead.name ? lead.name.charAt(0).toUpperCase() : 'U';
+        const isActive = (selectedCardId === lead.id);
+
+        let goalsHtml = '';
+        if (lead.g1_status) goalsHtml += `<div class="goal-item"><span>Goal 1</span><span class="status-tag">${lead.g1_status}</span></div>`;
+        if (lead.g2_status) goalsHtml += `<div class="goal-item"><span>Goal 2</span><span class="status-tag">${lead.g2_status}</span></div>`;
+        if (lead.remarks) goalsHtml += `<div class="goal-item" style="color:#38bdf8;font-style:italic;"><span>💬 ${lead.remarks}</span><span></span></div>`;
+
+        html += `
+            <div class="user-card ${isActive ? 'active-card' : ''}" id="card-${lead.id}">
+                <div class="user-card-header">
+                    <div class="user-info-left">
+                        <div class="avatar-circle">${initial}</div>
+                        <div>
+                            <div class="user-name">#${lead.id} - ${lead.name}</div>
+                            <div class="user-phone">${lead.phone}</div>
+                        </div>
+                    </div>
+                    <div class="action-icons">
+                        <a href="tel:${lead.phone}" class="icon-btn" title="Call">📞</a>
+                        <a href="https://wa.me/91${lead.phone.replace(/\D/g,'')}" target="_blank" class="icon-btn" title="WhatsApp">💬</a>
+                    </div>
+                </div>
+                <div class="user-card-body">
+                    <div class="acc-title-row">
+                        <div class="acc-brand">
+                            <div class="acc-logo">${lead.product.substring(0,4)}</div>
+                            <div>
+                                <div class="acc-name">${lead.product}</div>
+                                <div class="acc-sub">${lead.category}</div>
+                            </div>
+                        </div>
+                        <div class="submit-date">
+                            Date
+                            <span>${lead.date || 'N/A'}</span>
+                        </div>
+                    </div>
+                    <div class="goals-section">
+                        ${goalsHtml}
+                        <button class="select-card-btn ${isActive ? 'active-btn' : ''}" onclick="startTypingCard(${lead.id})">
+                            ${isActive ? '✏️ Typing in Progress...' : '▶️ Start Typing'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
+    renderResultHistory();
+    updateRoundChart();
+}
+
+function renderResultHistory() {
+    const panel = document.getElementById('resultPanel');
+    const history = document.getElementById('resultHistory');
+    if (!panel || !history) return;
+
+    if (!completedResultCards.length) {
+        panel.style.display = 'none';
+        return;
+    }
+
+    panel.style.display = 'block';
+    history.innerHTML = completedResultCards.map(r => `
+        <div class="result-history-card">
+            <strong>#${r.id} - ${r.name}</strong>
+            <span style="float:right;color:${r.outcome === 'missed' ? '#f97316' : (r.outcome === 'wrong' ? '#ef4444' : '#22c55e')}">
+                ${r.outcome === 'missed' ? '⏱ MISSED' : (r.outcome === 'wrong' ? '❌ WRONG' : '✅ CORRECT')}
+            </span>
+            <div style="margin-top:4px;color:#94a3b8;">${r.product} · ${r.time}s</div>
+        </div>
+    `).join('');
+}
+
+function startTypingCard(id) {
+    const lead = leadsData.find(item => item.id === id);
+    if (!lead) {
+        alert("Card nahi mila!");
+        return;
+    }
+
+    if (typingTimerInterval) clearInterval(typingTimerInterval);
+    if (window.activeScrollFrame) cancelAnimationFrame(window.activeScrollFrame);
+
+    selectedCardId = id;
+    typingSeconds = 0;
+    typingCycleActive = true;
+
+    const touchpad = document.getElementById('touchpadText');
+    touchpad.readOnly = false;
+    touchpad.value = '';
+    touchpad.placeholder = `Card #${lead.id} (${lead.name}) — Yahan card ki details type karein...`;
+    touchpad.focus();
+
+    document.getElementById('liveCardInfo').textContent =
+        `Card #${lead.id} - ${lead.name} (${lead.product})`;
+
+    updateTimerDisplay();
+    updateTypingProgress();
+    renderLeadsCards();
+
+    const startTime = performance.now();
+    const startScrollTop = document.getElementById('leadsCardsContainer').scrollTop;
+    const card = document.getElementById(`card-${id}`);
+    const container = document.getElementById('leadsCardsContainer');
+
+    typingTimerInterval = setInterval(() => {
+        if (!typingCycleActive || selectedCardId !== id) return;
+
+        typingSeconds = Math.min(TYPING_LIMIT_SECONDS,
+            Math.floor((performance.now() - startTime) / 1000));
+
+        updateTimerDisplay();
+        updateTypingProgress();
+
+        if (typingSeconds >= TYPING_LIMIT_SECONDS) {
+            finishTypingCycleAsMissed();
+        }
+    }, 100);
+
+    function moveCard(now) {
+        if (!typingCycleActive || selectedCardId !== id) return;
+
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / (TYPING_LIMIT_SECONDS * 1000));
+
+        const maxScroll = Math.max(0, container.scrollHeight - container.clientHeight);
+        const targetScroll = Math.min(maxScroll, startScrollTop + card.offsetHeight * 1.15 * progress);
+        container.scrollTop = targetScroll;
+
+        if (progress < 1) {
+            window.activeScrollFrame = requestAnimationFrame(moveCard);
+        }
+    }
+
+    window.activeScrollFrame = requestAnimationFrame(moveCard);
+}
+
+function updateTimerDisplay() {
+    const mins = String(Math.floor(typingSeconds / 60)).padStart(2, '0');
+    const secs = String(typingSeconds % 60).padStart(2, '0');
+    document.getElementById('typingTimer').textContent = `${mins}:${secs}`;
+}
+
+function updateTypingProgress() {
+    const bar = document.getElementById('typingProgressBar');
+    if (bar) bar.style.width = `${Math.min(100, (typingSeconds / TYPING_LIMIT_SECONDS) * 100)}%`;
+}
+
+function finishTypingCycleAsMissed() {
+    if (!typingCycleActive || selectedCardId === null) return;
+
+    const missedId = selectedCardId;
+    const lead = leadsData.find(item => item.id === missedId);
+
+    typingCycleActive = false;
+    typingSeconds = TYPING_LIMIT_SECONDS;
+
+    if (typingTimerInterval) {
+        clearInterval(typingTimerInterval);
+        typingTimerInterval = null;
+    }
+    if (window.activeScrollFrame) {
+        cancelAnimationFrame(window.activeScrollFrame);
+        window.activeScrollFrame = null;
+    }
+
+    updateTimerDisplay();
+    updateTypingProgress();
+
+    if (lead) {
+        const index = leadsData.findIndex(item => item.id === missedId);
+        if (index !== -1) leadsData.splice(index, 1);
+
+        completedResultCards.unshift({
+            id: lead.id,
+            name: lead.name,
+            product: lead.product,
+            time: TYPING_LIMIT_SECONDS,
+            outcome: 'missed'
+        });
+    }
+
+    cardOutcomeLog.push({ id: missedId, outcome: 'missed' });
+
+    selectedCardId = null;
+    document.getElementById('touchpadText').readOnly = true;
+    document.getElementById('touchpadText').value = '';
+    document.getElementById('touchpadText').placeholder =
+        "Right side se kisi card par 'Start Typing' click karein...";
+    document.getElementById('liveCardInfo').textContent =
+        `Card #${missedId} — Time complete. Next card select karein.`;
+
+    renderLeadsCards();
+
+    const bar = document.getElementById('typingProgressBar');
+    if (bar) bar.style.width = '0%';
+
+    showNotification(`⏱️ Card #${missedId} 60 seconds complete — Results me move ho gaya!`, false);
+}
+
+function clearTouchpad() {
+    document.getElementById('touchpadText').value = '';
+    document.getElementById('touchpadText').focus();
+}
+
+function saveAndRemoveCard() {
+    if (selectedCardId === null || !typingCycleActive) {
+        alert("Pehle kisi card par 'Start Typing' click karein!");
+        return;
+    }
+
+    const typedContent = document.getElementById('touchpadText').value.trim();
+    if (!typedContent) {
+        alert("Pehle card ki details type karein!");
+        return;
+    }
+
+    const index = leadsData.findIndex(item => item.id === selectedCardId);
+    if (index === -1) {
+        alert("Card nahi mila!");
+        return;
+    }
+
+    const removedLead = leadsData.splice(index, 1)[0];
+    const normalized = typedContent.toLowerCase().replace(/\s+/g, ' ').trim();
+    const expectedParts = [
+        String(removedLead.name || '').toLowerCase(),
+        String(removedLead.phone || '').toLowerCase(),
+        String(removedLead.product || '').toLowerCase()
+    ].filter(Boolean);
+    const matchedParts = expectedParts.filter(part => normalized.includes(part));
+    const isWrong = matchedParts.length < expectedParts.length;
+    const wrongType = isWrong
+        ? (matchedParts.length === 0 ? 'Name / phone / product mismatch' : 'Card details incomplete')
+        : null;
+
+    savedLeadsLog.push({
+        ...removedLead,
+        typed_notes: typedContent,
+        saved_at: new Date().toLocaleString(),
+        time_taken: typingSeconds,
+        is_wrong: isWrong,
+        wrong_type: wrongType
+    });
+
+    cardOutcomeLog.push({ id: removedLead.id, outcome: isWrong ? 'wrong' : 'correct' });
+    completedResultCards.unshift({
+        id: removedLead.id,
+        name: removedLead.name,
+        product: removedLead.product,
+        time: typingSeconds,
+        outcome: isWrong ? 'wrong' : 'correct'
+    });
+
+    downloadExcelReport();
+
+    selectedCardId = null;
+    typingCycleActive = false;
+
+    if (typingTimerInterval) {
+        clearInterval(typingTimerInterval);
+        typingTimerInterval = null;
+    }
+    if (window.activeScrollFrame) {
+        cancelAnimationFrame(window.activeScrollFrame);
+        window.activeScrollFrame = null;
+    }
+
+    typingSeconds = 0;
+    updateTimerDisplay();
+    updateTypingProgress();
+
+    const touchpad = document.getElementById('touchpadText');
+    touchpad.value = '';
+    touchpad.readOnly = true;
+    touchpad.placeholder = "Right side se kisi card par 'Start Typing' click karein...";
+    document.getElementById('liveCardInfo').textContent = "Card saved! Next card select karein.";
+
+    renderLeadsCards();
+
+    showNotification(
+        isWrong ? `⚠️ Card #${removedLead.id} Results me WRONG save hua!`
+                : `✅ Card #${removedLead.id} Results me CORRECT save hua!`,
+        isWrong
+    );
+}
+
+function showNotification(msg, isError) {
+    const div = document.createElement('div');
+    div.className = 'wrong-alert';
+    if (!isError) div.style.background = '#16a34a';
+    div.textContent = msg;
+    document.body.appendChild(div);
+    setTimeout(() => div.remove(), 3000);
+}
+
+function downloadExcelReport() {
+    let table = `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel">
+    <head><meta charset="UTF-8">
+    <style>
+        table { border-collapse: collapse; font-family: Arial; font-size: 12px; }
+        th { background: #1e293b; color: #fff; padding: 8px; border: 1px solid #334155; }
+        td { padding: 6px 8px; border: 1px solid #999; }
+        .wrong-row td { background-color: #ff4d4d; color: #ffffff; font-weight: bold; }
+        .correct-row td { background-color: #e6ffe6; }
+        .status-wrong { color: #ffffff; background: #cc0000; font-weight: bold; }
+        .status-ok { color: #006600; font-weight: bold; }
+    </style>
+    </head><body>
+    <h2>Completed Leads Report</h2>
+    <p><b>Date:</b> ${new Date().toLocaleString()} &nbsp; | &nbsp; <b>Total:</b> ${savedLeadsLog.length} &nbsp; | &nbsp; <b style="color:red;">Wrong Entries: ${savedLeadsLog.filter(r => r.is_wrong).length}</b></p>
+    <table>
+        <tr>
+            <th>ID</th><th>Name</th><th>Phone</th><th>Product</th><th>Category</th><th>Date</th>
+            <th>Goal 1</th><th>Goal 2</th><th>Remarks</th><th>Typed Notes</th><th>Time (sec)</th><th>Saved At</th><th>Status</th>
+        </tr>`;
+    
+    savedLeadsLog.forEach(row => {
+        const rowClass = row.is_wrong ? 'wrong-row' : 'correct-row';
+        const statusCell = row.is_wrong
+            ? `<td class="status-wrong">❌ WRONG — ${row.wrong_type}</td>`
+            : `<td class="status-ok">✅ CORRECT</td>`;
+        
+        table += `
+        <tr class="${rowClass}">
+            <td>${row.id}</td>
+            <td>${row.name}</td>
+            <td>${row.phone}</td>
+            <td>${row.product}</td>
+            <td>${row.category}</td>
+            <td>${row.date}</td>
+            <td>${row.g1_status}</td>
+            <td>${row.g2_status}</td>
+            <td>${row.remarks}</td>
+            <td>${row.typed_notes.replace(/\n/g, ' | ')}</td>
+            <td>${row.time_taken}</td>
+            <td>${row.saved_at}</td>
+            ${statusCell}
+        </tr>`;
+    });
+    
+    table += `</table></body></html>`;
+    
+    const blob = new Blob([table], { type: 'application/vnd.ms-excel' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Leads_Report_${new Date().toISOString().slice(0,10)}.xls`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
+// ==================== INIT & CHARTS ====================
+window.addEventListener('DOMContentLoaded', () => { 
+    renderLeadsCards(); 
+    initRoundChart();
+});
+
+function updateClock() { document.getElementById('liveClock').textContent = new Date().toLocaleTimeString(); }
+setInterval(updateClock, 1000);
+updateClock();
+
+const chartText = '#a8b4c7';
+const chartGrid = 'rgba(148,163,184,0.08)';
+const graphColors = ['#38bdf8','#22c55e','#8b5cf6','#f97316','#ec4899','#eab308','#14b8a6'];
+
+const chartTooltip = {
+    backgroundColor: '#0b1220',
+    titleColor: '#f8fafc',
+    bodyColor: '#cbd5e1',
+    borderColor: '#334155',
+    borderWidth: 1,
+    padding: 10,
+    displayColors: true
+};
+
+// 1. Product Distribution
+new Chart(document.getElementById('brandBarChart').getContext('2d'), {
+    type:'bar',
+    data:{
+        labels:['Choice','Equity','HDFC','Kotak','Motilal','StockGro','Upstox'],
+        datasets:[{
+            label:'Leads',
+            data:[12,45,4,15,25,30,67],
+            backgroundColor:graphColors,
+            borderRadius:8,
+            borderSkipped:false,
+            barPercentage:.72,
+            categoryPercentage:.72
+        }]
+    },
+    options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:chartTooltip },
+        scales:{
+            x:{ grid:{display:false}, border:{display:false}, ticks:{color:chartText,font:{size:10,weight:'600'}} },
+            y:{ beginAtZero:true, border:{display:false}, grid:{color:chartGrid,drawTicks:false}, ticks:{color:chartText,font:{size:10},padding:6} }
+        }
+    }
+});
+
+// 2. NEW ROUND GRAPH (DOUGHNUT) INITIALIZATION
+function initRoundChart() {
+    const ctx = document.getElementById('roundDoughnutChart').getContext('2d');
+    roundChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Correct', 'Active Pending', 'Missed', 'Wrong (Red)'],
+            datasets: [{
+                data: [0, leadsData.length, 0, 0],
+                backgroundColor: [
+                    '#22c55e', // Correct (Green)
+                    '#38bdf8', // Active (Blue)
+                    '#f97316', // Missed (Orange)
+                    '#ef4444'  // Wrong (RED COLOR)
+                ],
+                borderWidth: 2,
+                borderColor: '#1e293b'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: { color: '#f8fafc', font: { size: 10 } }
+                },
+                tooltip: chartTooltip
+            },
+            cutout: '65%'
+        }
+    });
+}
+
+// Function to dynamically update Round Chart values
+function updateRoundChart() {
+    if (!roundChartInstance) return;
+    
+    const correctCount = cardOutcomeLog.filter(x => x.outcome === 'correct').length;
+    const activeCount = leadsData.length;
+    const missedCount = cardOutcomeLog.filter(x => x.outcome === 'missed').length;
+    const wrongCount = cardOutcomeLog.filter(x => x.outcome === 'wrong').length;
+
+    roundChartInstance.data.datasets[0].data = [correctCount, activeCount, missedCount, wrongCount];
+    roundChartInstance.update();
+}
+
+// 3. Hourly Live Interview Flow
+const ctx3 = document.getElementById('hourlyLineChart').getContext('2d');
+const grad = ctx3.createLinearGradient(0,0,0,160);
+grad.addColorStop(0,'rgba(56,189,248,0.34)');
+grad.addColorStop(0.65,'rgba(56,189,248,0.10)');
+grad.addColorStop(1,'rgba(56,189,248,0)');
+
+new Chart(ctx3,{
+    type:'line',
+    data:{
+        labels:['9 AM','10 AM','11 AM','12 PM','1 PM','2 PM','3 PM'],
+        datasets:[{
+            label:'Interviews',
+            data:[5,15,22,18,9,14,5],
+            borderColor:'#38bdf8',
+            backgroundColor:grad,
+            fill:true,
+            tension:.42,
+            borderWidth:2.5,
+            pointRadius:3.5,
+            pointHoverRadius:6,
+            pointBackgroundColor:'#38bdf8',
+            pointBorderColor:'#0f172a',
+            pointBorderWidth:2
+        }]
+    },
+    options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:chartTooltip },
+        scales:{
+            x:{ grid:{display:false}, border:{display:false}, ticks:{color:chartText,font:{size:10,weight:'600'}} },
+            y:{ grid:{color:chartGrid,drawTicks:false}, border:{display:false}, ticks:{color:chartText,font:{size:10},padding:6}, min:0, max:25 }
+        }
+    }
+});
+
+function showTypingStats() {
+    const missed = cardOutcomeLog.filter(x => x.outcome === 'missed').length;
+    const wrong = cardOutcomeLog.filter(x => x.outcome === 'wrong').length;
+    const correct = cardOutcomeLog.filter(x => x.outcome === 'correct').length;
+    document.getElementById('missedCount').textContent = missed;
+    document.getElementById('wrongCount').textContent = wrong;
+    document.getElementById('correctCount').textContent = correct;
+    document.getElementById('typingStatsModal').style.display = 'flex';
+}
+
+function closeTypingStats() {
+    document.getElementById('typingStatsModal').style.display = 'none';
+}
+</script>
+
+<div class="typing-stats-modal" id="typingStatsModal" onclick="if(event.target===this) closeTypingStats()">
+  <div class="typing-stats-box">
+    <h3>⌨️ Typing Performance</h3>
+    <div class="stats-grid">
+      <div class="stat-mini"><strong id="missedCount" style="color:#f97316;">0</strong><span>Missed Cards</span></div>
+      <div class="stat-mini"><strong id="wrongCount" style="color:#ef4444;">0</strong><span>Wrong Typing</span></div>
+      <div class="stat-mini"><strong id="correctCount" style="color:#22c55e;">0</strong><span>Correct Typing</span></div>
+    </div>
+    <button class="stats-close" onclick="closeTypingStats()">Close</button>
+  </div>
+</div>
+
+</body>
+</html>
